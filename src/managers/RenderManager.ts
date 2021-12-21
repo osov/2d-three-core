@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 import {InputManager} from './InputManager';
 const {Text, preloadFont} = require('troika-three-text');
-//import TextTexture from '@seregpie/three.text-texture';
-
 
 export interface InitParams{
 	isPerspective?:boolean
@@ -17,7 +15,7 @@ export class RenderManager extends InputManager{
 
 	public readonly textures:{[key: string]: THREE.Texture} = {};
 	public readonly params:InitParams;
-	private font:string = '';
+	private fontUrl:string = '';
 
 	constructor(params:InitParams = {isPerspective:false})
 	{
@@ -53,7 +51,7 @@ export class RenderManager extends InputManager{
 		this.onResize();
 	}
 
-	async init(font:string)
+	async initRender(fontUrl:string)
 	{
 		var imageCanvas = document.createElement( "canvas" );
 		var context = imageCanvas.getContext( "2d" );
@@ -71,8 +69,8 @@ export class RenderManager extends InputManager{
 			textureCanvas.name = "bad_texture";
 			this.textures['bad'] = textureCanvas;
 		}
-		this.font = font;
-		await this.preloadFont(font);
+		this.fontUrl = fontUrl;
+		await this.preloadFont(fontUrl);
 	}
 
 	onResize()
@@ -127,7 +125,7 @@ export class RenderManager extends InputManager{
 				},
 				function ( xhr )
 				{
-					//console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+					//this.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 				},
 				function ( xhr )
 				{
@@ -157,7 +155,7 @@ export class RenderManager extends InputManager{
 	{
 		if (!this.textures[name])
 		{
-			console.warn("Текстура не загружена:", name);
+			this.warn("Текстура не загружена:", name);
 			return this.textures['bad'];
 		}
 		return this.textures[name];
@@ -190,13 +188,13 @@ export class RenderManager extends InputManager{
 		if (material.map)
 			material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping;
 		const mesh = new THREE.Mesh( geometry, material);
-		return this.addMesh(mesh, parent, addToRaycast);
+		return this.addMesh(mesh, parent, addToRaycast) as THREE.Mesh;
 	}
 
-	async addText(val:string, size=16, parent:THREE.Object3D|null = null, , addToRaycast = false)
+	async addText(val:string, size=16, parent:THREE.Object3D|null = null, addToRaycast = false)
 	{
 		var mesh = new Text()
-		mesh.font = this.font;
+		mesh.font = this.fontUrl;
 		mesh.text =  val
 		mesh.fontSize = size
 		mesh.color = 0xffffff
@@ -209,6 +207,9 @@ export class RenderManager extends InputManager{
 	{
 		if (sprite.parent !== null)
 		{
+			var index = this.raycastGroup.children.indexOf(sprite);
+			if (index > -1)
+				this.raycastGroup.remove(sprite);
 			sprite.parent.remove(sprite);
 			return true;
 		}
@@ -239,19 +240,19 @@ export class RenderManager extends InputManager{
 		if (child > -1)
 		{
 			if (child + 1 > sprite.children.length)
-				return console.warn("Дочерний элемент не найден:", child);
+				return this.warn("Дочерний элемент не найден:", child);
 			this.setVisible(sprite.children[child], val);
 			return;
 		}
 		sprite.visible = val;
 	}
 
-	setColor(sprite:THREE.Sprite|THREE.Mesh, color = '', alpha = -1, isChilds = false)
+	setColor(sprite:THREE.Object3D, color = '', alpha = -1, isChilds = false)
 	{
 		if (isChilds)
 		{
 			for (var i = sprite.children.length - 1; i >= 0; i--)
-				this.setColor((sprite.children[i] as THREE.Sprite), color);
+				this.setColor(sprite.children[i], color);
 		}
 		if (alpha != -1)
 		{
@@ -260,7 +261,7 @@ export class RenderManager extends InputManager{
 				sprite.material.transparent = true;
 				sprite.material.opacity = alpha;
 			}
-			else
+			else if (sprite instanceof THREE.Mesh)
 			{
 				var mat = sprite.material as THREE.MeshBasicMaterial;
 				mat.transparent = true;
@@ -271,18 +272,24 @@ export class RenderManager extends InputManager{
 		{
 			sprite.material.color.set( color );
 		}
-		else
+		else if (sprite instanceof THREE.Mesh)
 		{
 			var mat = sprite.material as THREE.MeshBasicMaterial;
 			mat.color.set( color );
 		}
+		else
+			this.warn("Тип меша не найден:", sprite);
 
 	}
 
 	setImage(sprite:THREE.Object3D, image:string)
 	{
-		var spr = (sprite as THREE.Sprite);
-		spr.material.map = this.getMap(image);
+		if (sprite instanceof THREE.Sprite)
+		{
+			sprite.material.map = this.getMap(image);
+		}
+		else
+			this.warn("Тип меша не найден:", sprite);
 	}
 
 	getAngleBetweenPoints(p1:THREE.Vector2|THREE.Vector3, p2:THREE.Vector2|THREE.Vector3):number

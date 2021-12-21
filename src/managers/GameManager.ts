@@ -2,14 +2,24 @@ import * as THREE from 'three';
 import {SimpleEventEmitter} from '../core/EventEmitter';
 import {InputManager} from './InputManager';
 import {RenderManager, InitParams} from './RenderManager';
+import {CameraHelper, CameraSettings} from '../helpers/CameraHelper';
+import {WrapHelper, WrapInfo} from '../helpers/WrapHelper';
 
+interface WorldSettings{
+	worldWidth:number;
+	worldHeight:number;
+	viewDistance:number;
+	cameraSpeed:number;
+	fontUrl:string;
+}
 
 export class GameManager extends RenderManager{
 
-	public selectedObject:THREE.Object3D | null = null;
+	public selectedObject:THREE.Object3D|null;
 	public isClickIntersect = false;
 	public isMoveIntersect = false;
-
+	public cameraHelper:CameraHelper;
+	public wrapHelper:WrapHelper;
 	private readonly raycaster = new THREE.Raycaster();
 	private lastUpdate:number = 0;
 
@@ -17,7 +27,14 @@ export class GameManager extends RenderManager{
 	constructor(params:InitParams = {isPerspective:false})
 	{
 		super(params);
+	}
 
+	async init(settings:WorldSettings)
+	{
+		await super.initRender(settings.fontUrl);
+		this.cameraHelper = new CameraHelper(this.camera, settings);
+		this.wrapHelper = new WrapHelper(this.camera, settings);
+		this.wrapHelper.drawDebugBorder(this.scene);
 	}
 
 	start()
@@ -26,9 +43,9 @@ export class GameManager extends RenderManager{
 	}
 
 
-// ----------------------------------------------------------------------------------------------------------
-// INPUT EVENTS
-// ----------------------------------------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------------------------------
+	// INPUT EVENTS
+	// ----------------------------------------------------------------------------------------------------------
 
 	onMove(clientX = 0,clientY = 0)
 	{
@@ -110,9 +127,25 @@ export class GameManager extends RenderManager{
 	}
 
 
-// ----------------------------------------------------------------------------------------------------------
-// Core
-// ----------------------------------------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------------------------------
+	// Core
+	// ----------------------------------------------------------------------------------------------------------
+	getWrapInfo()
+	{
+		return this.wrapHelper.getWrapInfo(this.camera.position);
+	}
+
+	getWrapPos(wrapData:WrapInfo, pos:THREE.Vector2|THREE.Vector3)
+	{
+		return this.wrapHelper.getWrapPos(wrapData, pos);
+	}
+
+	getWrapPosBorder(pos:THREE.Vector2|THREE.Vector3)
+	{
+		return this.wrapHelper.getWrapPosBorder(this.getWrapInfo(), pos);
+	}
+
+
 
 	doFull()
 	{
