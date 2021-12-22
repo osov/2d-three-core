@@ -1,42 +1,32 @@
-import * as THREE from 'three';
-import {SimpleEventEmitter} from '../core/EventEmitter';
+import {Vector2, Vector3} from 'three';
+import {BaseHelper} from './BaseHelper';
 
-export interface CameraSettings{
-	worldWidth:number;
-	worldHeight:number;
-	cameraSpeed:number;
-}
+export class CameraHelper extends BaseHelper{
 
-export class CameraHelper extends SimpleEventEmitter{
+	private lookingAt:Vector2 = new Vector2();
+	public readonly bgPhase:Vector2 = new Vector2();
+	public readonly bgOffset:Vector2 = new Vector2();
 
-	private lookingAt:THREE.Vector2 = new THREE.Vector2();
-	private camera:THREE.Camera;
-	private settings:CameraSettings;
-	public readonly bgPhase:THREE.Vector2 = new THREE.Vector2();
-	public readonly bgOffset:THREE.Vector2 = new THREE.Vector2();
-
-	constructor(camera:THREE.Camera, settings:CameraSettings)
+	constructor(v:any)
 	{
-		super();
-		this.camera = camera;
-		this.settings = settings;
+		super(v);
 	}
 
 	centerCamera(x:number, y:number)
 	{
-		this.camera.position.set(x, y, this.camera.position.z );
+		this.gm.camera.position.set(x, y, this.gm.camera.position.z );
 		this.lookingAt.x = x;
 		this.lookingAt.y = y;
 	}
 
-	doCam(cameraTarget:THREE.Vector2|THREE.Vector3, deltaTime:number, deltaStep:THREE.Vector2|THREE.Vector3)
+	doCam(cameraTarget:Vector2|Vector3, deltaTime:number, deltaStep:Vector2|Vector3)
 	{
 		let lookingAtDeltaX = cameraTarget.x - this.lookingAt.x;
 		let lookingAtDeltaY = cameraTarget.y - this.lookingAt.y;
 		let cameraTempTargetX = 0;
 		let cameraTempTargetY = 0;
-		const worldWidth = this.settings.worldWidth;
-		const worldHeight = this.settings.worldHeight;
+		const worldWidth = this.gm.settings.worldWidth;
+		const worldHeight = this.gm.settings.worldHeight;
 
 		if (lookingAtDeltaX > worldWidth / 2)
 		{
@@ -49,7 +39,7 @@ export class CameraHelper extends SimpleEventEmitter{
 			this.bgPhase.x -=1;
 		}
 		else
-			cameraTempTargetX = this.lookingAt.x + lookingAtDeltaX * this.settings.cameraSpeed * deltaTime;
+			cameraTempTargetX = this.lookingAt.x + lookingAtDeltaX * this.gm.settings.cameraSpeed * deltaTime;
 
 		if (lookingAtDeltaY > worldHeight / 2)
 		{
@@ -62,7 +52,7 @@ export class CameraHelper extends SimpleEventEmitter{
 			this.bgPhase.y -=1;
 		}
 		else
-			cameraTempTargetY = this.lookingAt.y + lookingAtDeltaY * this.settings.cameraSpeed * deltaTime;
+			cameraTempTargetY = this.lookingAt.y + lookingAtDeltaY * this.gm.settings.cameraSpeed * deltaTime;
 
 		/*var bgOffsetX = this.bgPhase.x * worldWidth + this.camera.position.x;
 		var bgOffsetY = this.bgPhase.y * worldHeight + this.camera.position.y;

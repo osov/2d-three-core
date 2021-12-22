@@ -1,14 +1,14 @@
-import * as THREE from 'three';
-import {SimpleEventEmitter} from '../core/EventEmitter';
+import {Vector2} from 'three';
+import {BaseManager} from './BaseManager';
 
 interface BaseKeys{
 	left:boolean;
 	right:boolean;
 }
 
-export class InputManager extends SimpleEventEmitter{
+export class InputManager extends BaseManager{
 
-	public mousePos:THREE.Vector2 = new THREE.Vector2();
+	public mousePos:Vector2 = new Vector2();
 	public baseKeys:BaseKeys = {left:false, right:false};
 
 	constructor()
@@ -23,7 +23,7 @@ export class InputManager extends SimpleEventEmitter{
 		window.addEventListener('resize', this.onResize.bind(this), false);
 	}
 
-	onResize()
+	protected onResize()
 	{
 
 	}
@@ -69,24 +69,25 @@ export class InputManager extends SimpleEventEmitter{
 		this.onMove(event.clientX, event.clientY);
 	}
 
-	onMove(clientX = 0,clientY = 0)
+	protected onMove(clientX = 0,clientY = 0)
 	{
 		this.setPointers(clientX, clientY);
 		this.emit("onMove", this.mousePos);
 	}
 
-	onInputDown(clientX = 0, clientY = 0)
+	protected onInputDown(clientX = 0, clientY = 0)
 	{
 		this.setPointers(clientX, clientY);
-		this.emit("onDown", clientX, clientY);
+		this.emit("onDown", this.mousePos);
 	}
 
 	private onInputUp(clientX = 0, clientY = 0)
 	{
-		this.emit("onUp", clientX, clientY);
+		this.setPointers(clientX, clientY);
+		this.emit("onUp", this.mousePos);
 	}
 
-	setPointers(clientX = 0,clientY = 0)
+	protected setPointers(clientX = 0,clientY = 0)
 	{
 		this.mousePos.x = clientX;
 		this.mousePos.y = clientY;

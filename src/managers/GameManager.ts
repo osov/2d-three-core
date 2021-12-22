@@ -1,9 +1,9 @@
-import * as THREE from 'three';
-import {SimpleEventEmitter} from '../core/EventEmitter';
-import {InputManager} from './InputManager';
+import {Vector2, Vector3, Object3D,Raycaster} from 'three';
 import {RenderManager, InitParams} from './RenderManager';
-import {CameraHelper, CameraSettings} from '../helpers/CameraHelper';
+import {CameraHelper} from '../helpers/CameraHelper';
 import {WrapHelper, WrapInfo} from '../helpers/WrapHelper';
+import {SelectorHelper} from '../helpers/SelectorHelper';
+import * as gUtils from '../core/gameUtils';
 
 interface WorldSettings{
 	worldWidth:number;
@@ -15,14 +15,12 @@ interface WorldSettings{
 
 export class GameManager extends RenderManager{
 
-	public selectedObject:THREE.Object3D|null;
-	public isClickIntersect = false;
-	public isMoveIntersect = false;
+	public settings:WorldSettings;
 	public cameraHelper:CameraHelper;
 	public wrapHelper:WrapHelper;
-	private readonly raycaster = new THREE.Raycaster();
-	private lastUpdate:number = 0;
+	public selectorHelper:SelectorHelper;
 
+	private lastUpdate:number = 0;
 
 	constructor(params:InitParams = {isPerspective:false})
 	{
@@ -31,9 +29,16 @@ export class GameManager extends RenderManager{
 
 	async init(settings:WorldSettings)
 	{
+		this.settings = settings;
 		await super.initRender(settings.fontUrl);
-		this.cameraHelper = new CameraHelper(this.camera, settings);
-		this.wrapHelper = new WrapHelper(this.camera, settings);
+		this.cameraHelper = new CameraHelper(this);
+		this.wrapHelper = new WrapHelper(this);
+		this.selectorHelper = new SelectorHelper(this);
+
+		this.cameraHelper.init();
+		this.wrapHelper.init();
+		this.selectorHelper.init();
+
 		this.wrapHelper.drawDebugBorder(this.scene);
 	}
 
@@ -42,110 +47,39 @@ export class GameManager extends RenderManager{
 		this.animate(0);
 	}
 
-
-	// ----------------------------------------------------------------------------------------------------------
-	// INPUT EVENTS
-	// ----------------------------------------------------------------------------------------------------------
-
-	onMove(clientX = 0,clientY = 0)
-	{
-		this.setPointers(clientX, clientY);
-		if (this.isMoveIntersect)
-			this.checkOnIntersect();
-		this.emit("onMove", this.mousePos);
-	}
-
-
-	onInputDown(clientX = 0, clientY = 0)
-	{
-		this.setPointers(clientX, clientY);
-		if (this.isClickIntersect)
-			this.checkOnIntersect();
-		this.emit("onDown", clientX, clientY);
-	}
-
-	private checkOnIntersect()
-	{
-		var pointer = new THREE.Vector2(
-			( this.mousePos.x / window.innerWidth ) * 2 - 1,
-			- (this.mousePos.y / window.innerHeight ) * 2 + 1
-		);
-		this.raycaster.setFromCamera( pointer, this.camera );
-		const intersects = this.raycaster.intersectObject( this.raycastGroup, true );
-		if ( intersects.length > 0 )
-		{
-			const res = intersects.filter( function ( res ){return res && res.object;})[0];
-			if ( res && res.object )
-			{
-				if (this.selectedObject == res.object)
-					return;
-
-				if (this.selectedObject)
-					this.onLeaveItem(this.selectedObject);
-				this.selectedObject = res.object;
-				this.onEnterItem(this.selectedObject);
-			}
-		}
-		else if (this.selectedObject)
-		{
-			this.onLeaveItem(this.selectedObject);
-			this.selectedObject = null;
-		}
-	}
-
-	onEnterItem(mesh:THREE.Object3D)
-	{
-		//console.log('enter', mesh);
-		this.emit("onEnter", mesh);
-	}
-
-	onLeaveItem(mesh:THREE.Object3D)
-	{
-		//console.log('leave', mesh);
-		this.emit("onLeave", mesh);
-	}
-
-	pointToScreen(point:THREE.Vector3|THREE.Vector2)
-	{
-		var w = this.container.clientWidth;
-		var h = this.container.clientHeight;
-		var widthHalf = w / 2, heightHalf = h / 2;
-		var vector = new THREE.Vector3(point.x, point.y, 0);
-		vector.project(this.camera);
-		vector.x = ( vector.x * widthHalf ) + widthHalf;
-		vector.y = -( vector.y * heightHalf ) + heightHalf;
-		return new THREE.Vector2(vector.x, vector.y);
-	}
-
-	screenToPoint(point:THREE.Vector3|THREE.Vector2)
-	{
-		var w = this.container.clientWidth;
-		var h = this.container.clientHeight;
-		var vector = new THREE.Vector3(( point.x / w ) * 2 - 1, -( point.y / h ) * 2 + 1, -1);
-		vector = vector.unproject(this.camera);
-		return vector;
-	}
-
-
 	// ----------------------------------------------------------------------------------------------------------
 	// Core
 	// ----------------------------------------------------------------------------------------------------------
+
+	pointToScreen(point:Vector3|Vector2)
+	{
+		return gUtils.pointToScreen(point, this.camera, this.container);
+	}
+
+	screenToPoint(point:Vector3|Vector2)
+	{
+		return gUtils.screenToPoint(point, this.camera, this.container);
+	}
+
 	getWrapInfo()
 	{
 		return this.wrapHelper.getWrapInfo(this.camera.position);
 	}
 
-	getWrapPos(wrapData:WrapInfo, pos:THREE.Vector2|THREE.Vector3)
+	getWrapPos(wrapData:WrapInfo, pos:Vector2|Vector3)
 	{
 		return this.wrapHelper.getWrapPos(wrapData, pos);
 	}
 
-	getWrapPosBorder(pos:THREE.Vector2|THREE.Vector3)
+	getWrapPosBorder(pos:Vector2|Vector3)
 	{
 		return this.wrapHelper.getWrapPosBorder(this.getWrapInfo(), pos);
 	}
 
-
+	wrapPosition(pos:Vector2|Vector3)
+	{
+		return this.wrapHelper.wrapPosition(pos);
+	}
 
 	doFull()
 	{
@@ -154,16 +88,16 @@ export class GameManager extends RenderManager{
 
 	animate(now:number)
 	{
-		const dt = now - this.lastUpdate;
+		const deltaTime = now - this.lastUpdate;
 		this.lastUpdate = now;
-		this.update(dt, now);
+		this.update(deltaTime, now);
 		requestAnimationFrame(this.animate.bind(this));
 	}
 
-	update(dt:number, now:number)
+	update(deltaTime:number, now:number)
 	{
-		this.emit("onBeforeRender", dt, now);
+		this.emit("onBeforeRender", deltaTime, now);
 		this.renderer.render(this.scene, this.camera);
-		this.emit("onAfterRender", dt, now);
+		this.emit("onAfterRender", deltaTime, now);
 	}
 }

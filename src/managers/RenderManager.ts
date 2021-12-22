@@ -1,20 +1,37 @@
+import {
+	Scene, Camera, WebGLRenderer, Group,
+	PerspectiveCamera, OrthographicCamera,
+	Sprite,SpriteMaterial,PlaneBufferGeometry,MeshBasicMaterial,Mesh,Object3D,
+	TextureLoader, Texture, CanvasTexture, RepeatWrapping,
+	Vector2, Vector3} from 'three';
+
 import * as THREE from 'three';
+
 import {InputManager} from './InputManager';
+import {EntityType} from '../entitys/Entity';
+import * as gUtils from '../core/gameUtils';
 const {Text, preloadFont} = require('troika-three-text');
 
 export interface InitParams{
 	isPerspective?:boolean
 }
 
+interface PrefabInfo{
+	type:EntityType;
+	mapName:string;
+	item:Object3D;
+}
+
 export class RenderManager extends InputManager{
 	public readonly container:HTMLElement;
-	public readonly scene:THREE.Scene;
-	public readonly camera: THREE.Camera;
-	public readonly renderer:THREE.WebGLRenderer;
-	public readonly raycastGroup:THREE.Group;
+	public readonly scene:Scene;
+	public readonly camera:Camera;
+	public readonly renderer:WebGLRenderer;
+	public readonly raycastGroup:Group;
 
-	public readonly textures:{[key: string]: THREE.Texture} = {};
-	public readonly params:InitParams;
+	private readonly textures:{[key: string]: Texture} = {};
+	private readonly params:InitParams;
+	private readonly prefabs:{[key: string]: PrefabInfo} = {};
 	private fontUrl:string = '';
 
 	constructor(params:InitParams = {isPerspective:false})
@@ -26,25 +43,24 @@ export class RenderManager extends InputManager{
 		const isPerspective = params.isPerspective !== undefined && params.isPerspective === true;
 		if (isPerspective)
 		{
-			const cam = new THREE.PerspectiveCamera(75, width / height, 0.1, 100)
+			const cam = new PerspectiveCamera(75, width / height, 0.1, 100)
 			cam.position.z = 2;
 			this.camera = cam;
 		}
 		else
 		{
-			const near = -10;
-			const far = 10;
-			const cam = new THREE.OrthographicCamera(0, 0, 0, 0, near, far);
+			const cam = new OrthographicCamera(0, 0, 0, 0, -10, 10);
 			cam.zoom = 1;
 			this.camera = cam;
 		}
 
-		this.scene = new THREE.Scene();
-		this.renderer = new THREE.WebGLRenderer();
+		this.scene = new Scene();
+		this.renderer = new WebGLRenderer();
 		this.renderer.setSize(width, height);
 		this.renderer.setClearColor( 0xffffff, 1 );
-		this.raycastGroup = new THREE.Group();
+		this.raycastGroup = new Group();
 		this.scene.add(this.raycastGroup);
+
 		this.container = document.body;
 		this.container.appendChild(this.renderer.domElement);
 		this.container.oncontextmenu = function(){return false;}
@@ -63,9 +79,9 @@ export class RenderManager extends InputManager{
 			context.fillStyle = "#fff";
 			context.fillRect( 0, 0, 64, 64);
 			context.fillRect( 64, 64, 64, 64 );
-			var textureCanvas = new THREE.CanvasTexture( imageCanvas );
-			textureCanvas.wrapS = THREE.RepeatWrapping;
-			textureCanvas.wrapT = THREE.RepeatWrapping;
+			var textureCanvas = new CanvasTexture( imageCanvas );
+			textureCanvas.wrapS = RepeatWrapping;
+			textureCanvas.wrapT = RepeatWrapping;
 			textureCanvas.name = "bad_texture";
 			this.textures['bad'] = textureCanvas;
 		}
@@ -73,15 +89,15 @@ export class RenderManager extends InputManager{
 		await this.preloadFont(fontUrl);
 	}
 
-	onResize()
+	protected onResize()
 	{
-		const width = window.innerWidth;
-		const height =  window.innerHeight;
+		const width = this.container.clientWidth;
+		const height =  this.container.clientHeight;
 		const isPerspective = this.params.isPerspective !== undefined && this.params.isPerspective === true;
 		if (isPerspective)
 		{
-			(this.camera as THREE.PerspectiveCamera).aspect = width / height;
-			(this.camera as THREE.PerspectiveCamera).updateProjectionMatrix();
+			(this.camera as PerspectiveCamera).aspect = width / height;
+			(this.camera as PerspectiveCamera).updateProjectionMatrix();
 		}
 		else
 		{
@@ -89,33 +105,34 @@ export class RenderManager extends InputManager{
 			const right = width/2;
 			const top = height/2;
 			const bottom = -height/2;
-			(this.camera as THREE.OrthographicCamera).top = top;
-			(this.camera as THREE.OrthographicCamera).right = right;
-			(this.camera as THREE.OrthographicCamera).left = left;
-			(this.camera as THREE.OrthographicCamera).bottom = bottom;
+			(this.camera as OrthographicCamera).top = top;
+			(this.camera as OrthographicCamera).right = right;
+			(this.camera as OrthographicCamera).left = left;
+			(this.camera as OrthographicCamera).bottom = bottom;
 
-			(this.camera as THREE.OrthographicCamera).updateProjectionMatrix();
+			(this.camera as OrthographicCamera).updateProjectionMatrix();
 		}
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
+		this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
 		//this.render();
 	}
 
 // ----------------------------------------------------------------------------------------------------------
 // loaders
 // ----------------------------------------------------------------------------------------------------------
+
 	preloadFont(url:string)
 	{
 		return new Promise(function(resolve, reject)
 		{
-			preloadFont({font: url},  () => {resolve(true);});
+			preloadFont({font: url}, () => {resolve(true);});
 		});
 	}
 
-	loadTexture(path:string):Promise<THREE.Texture>
+	loadTexture(path:string):Promise<Texture>
 	{
 		return new Promise(function(resolve, reject)
 		{
-			var loader = new THREE.TextureLoader();
+			var loader = new TextureLoader();
 			loader.load(
 				path,
 				function (texture)
@@ -146,12 +163,13 @@ export class RenderManager extends InputManager{
 			var tex = list[i];
 			var filename = tex.name.replace(/^.*[\\\/]/, '');
 			filename = filename.substr(0, filename.length - 4);
+			tex.name = filename;
 			this.textures[filename] = tex;
 		}
 		return this.textures;
 	}
 
-	getMap(name:string):THREE.Texture
+	getMap(name:string):Texture
 	{
 		if (!this.textures[name])
 		{
@@ -164,7 +182,57 @@ export class RenderManager extends InputManager{
 // ----------------------------------------------------------------------------------------------------------
 // Adding
 // ----------------------------------------------------------------------------------------------------------
-	addMesh(mesh:THREE.Object3D, parent:THREE.Object3D|null = null, addToRaycast = false)
+	registerPrefab(name:string, prefab:Object3D)
+	{
+		if (this.prefabs[name])
+		{
+			this.warn("Префаб уже зарегистрирован:", name);
+			return false;
+		}
+		prefab.visible = false;
+		var mapName = '';
+		var type = EntityType.mesh;
+		if (prefab instanceof Sprite)
+		{
+			type = EntityType.sprite;
+			if (prefab.material.map)
+				mapName = prefab.material.map.name;
+		}
+		else if (prefab instanceof Text)
+			type = EntityType.text;
+		else
+		{
+			type = EntityType.mesh;
+			if (prefab instanceof Mesh && prefab.material)
+				mapName = prefab.material.map.name;
+		}
+		//if (prefab instanceof )
+		this.prefabs[name] = {type:type, item:prefab, mapName:mapName};
+
+	}
+
+	CreatePrefab(name:string, pos:Vector3, angle:number = 0)
+	{
+		if (!this.prefabs[name])
+		{
+			this.warn("Префаб не зарегистрирован:", name);
+			return false;
+		}
+		var prefabInfo = this.prefabs[name];
+		var prefab = prefabInfo.item;
+		var mesh = null;
+		if (prefabInfo.type == EntityType.sprite)
+			mesh = this.addSprite(prefabInfo.mapName);
+		if (prefabInfo.type == EntityType.text)
+			mesh = this.addText('text - '+name);
+		else
+			mesh = this.addSpriteAsPlane(prefabInfo.mapName);
+		var z = (pos instanceof Vector3) ? pos.z : 0;
+		mesh.position.set(pos.x, pos.y, z );
+		return mesh;
+	}
+
+	protected addMesh(mesh:Object3D, parent:Object3D|null = null, addToRaycast = false)
 	{
 		if (parent == null)
 			this.scene.add(mesh);
@@ -175,35 +243,39 @@ export class RenderManager extends InputManager{
 		return mesh;
 	}
 
-	addSprite(image = '', parent:THREE.Object3D|null = null, addToRaycast = false)
+	addSprite(image:string, parent:Object3D|null = null, addToRaycast = false)
 	{
-		var mesh = new THREE.Sprite( new THREE.SpriteMaterial( {map: this.getMap(image)}) );
+		var mesh = new Sprite( new SpriteMaterial( {map: this.getMap(image)}) );
 		return this.addMesh(mesh, parent, addToRaycast);
 	}
 
-	addSpriteAsPlane(image = '', parent:THREE.Object3D|null = null, addToRaycast = false)
+	addSpriteAsPlane(image:string, parent:Object3D|null = null, addToRaycast = false)
 	{
-		const geometry = new THREE.PlaneBufferGeometry( 1, 1 );
-		const material = new THREE.MeshBasicMaterial( {color: 0xffffff, map:this.getMap(image)} );
+		const geometry = new PlaneBufferGeometry( 1, 1 );
+		const material = new MeshBasicMaterial( {color: 0xffffff, map:this.getMap(image)} );
 		if (material.map)
-			material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping;
-		const mesh = new THREE.Mesh( geometry, material);
-		return this.addMesh(mesh, parent, addToRaycast) as THREE.Mesh;
+			material.map.wrapS = material.map.wrapT = RepeatWrapping;
+		const mesh = new Mesh( geometry, material);
+		return this.addMesh(mesh, parent, addToRaycast) as Mesh;
 	}
 
-	async addText(val:string, size=16, parent:THREE.Object3D|null = null, addToRaycast = false)
+	addSpriteAsParticle(master:string)
+	{
+	}
+
+	addText(val:string, size=16, parent:Object3D|null = null, addToRaycast = false)
 	{
 		var mesh = new Text()
 		mesh.font = this.fontUrl;
 		mesh.text =  val
 		mesh.fontSize = size
-		mesh.color = 0xffffff
+		mesh.color = 0xf0fff0
 		mesh.sync()
 		mesh.anchorX = '50%';
 		return this.addMesh(mesh, parent, addToRaycast);
 	}
 
-	remove(sprite:THREE.Object3D)
+	remove(sprite:Object3D)
 	{
 		if (sprite.parent !== null)
 		{
@@ -216,7 +288,7 @@ export class RenderManager extends InputManager{
 		return false;
 	}
 
-	removeChild(sprite:THREE.Object3D, index:number)
+	removeChild(sprite:Object3D, index:number)
 	{
 		if (index + 1 > sprite.children.length)
 		{
@@ -235,7 +307,7 @@ export class RenderManager extends InputManager{
 		this.renderer.setClearColor( color, 1 );
 	}
 
-	setVisible(sprite:THREE.Object3D, val:boolean, child:number=-1)
+	setVisible(sprite:Object3D, val:boolean, child:number=-1)
 	{
 		if (child > -1)
 		{
@@ -247,7 +319,7 @@ export class RenderManager extends InputManager{
 		sprite.visible = val;
 	}
 
-	setColor(sprite:THREE.Object3D, color = '', alpha = -1, isChilds = false)
+	setColor(sprite:Object3D, color = '', alpha = -1, isChilds = false)
 	{
 		if (isChilds)
 		{
@@ -256,25 +328,25 @@ export class RenderManager extends InputManager{
 		}
 		if (alpha != -1)
 		{
-			if (sprite instanceof THREE.Sprite)
+			if (sprite instanceof Sprite)
 			{
 				sprite.material.transparent = true;
 				sprite.material.opacity = alpha;
 			}
-			else if (sprite instanceof THREE.Mesh)
+			else if (sprite instanceof Mesh)
 			{
-				var mat = sprite.material as THREE.MeshBasicMaterial;
+				var mat = sprite.material as MeshBasicMaterial;
 				mat.transparent = true;
 				mat.opacity = alpha;
 			}
 		}
-		if (sprite instanceof THREE.Sprite)
+		if (sprite instanceof Sprite)
 		{
 			sprite.material.color.set( color );
 		}
-		else if (sprite instanceof THREE.Mesh)
+		else if (sprite instanceof Mesh)
 		{
-			var mat = sprite.material as THREE.MeshBasicMaterial;
+			var mat = sprite.material as MeshBasicMaterial;
 			mat.color.set( color );
 		}
 		else
@@ -282,9 +354,9 @@ export class RenderManager extends InputManager{
 
 	}
 
-	setImage(sprite:THREE.Object3D, image:string)
+	setImage(sprite:Object3D, image:string)
 	{
-		if (sprite instanceof THREE.Sprite)
+		if (sprite instanceof Sprite)
 		{
 			sprite.material.map = this.getMap(image);
 		}
@@ -292,22 +364,18 @@ export class RenderManager extends InputManager{
 			this.warn("Тип меша не найден:", sprite);
 	}
 
-	getAngleBetweenPoints(p1:THREE.Vector2|THREE.Vector3, p2:THREE.Vector2|THREE.Vector3):number
+	getAngleBetweenPoints(p1:Vector2|Vector3, p2:Vector2|Vector3):number
 	{
-		var delta = new THREE.Vector2(p1.x, p1.y).sub(new THREE.Vector2(p2.x, p2.y));
-		var angle = Math.atan2(delta.x, delta.y);
-		if (angle < 0)
-			angle += 2 * Math.PI;
-		return angle;
+		return gUtils.getAngleBetweenPoints(p1,p2);
 	}
 
-	setAngle(sprite:THREE.Sprite|THREE.Mesh, angle:number)
+	setAngle(sprite:Sprite|Mesh, angle:number)
 	{
-		if (sprite instanceof THREE.Mesh)
+		if (sprite instanceof Mesh)
 			sprite.rotation.z = angle;
 	}
 
-	setScale(sprite:THREE.Object3D, scale:number)
+	setScale(sprite:Object3D, scale:number)
 	{
 		sprite.scale.setScalar(scale);
 	}
