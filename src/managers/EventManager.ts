@@ -6,7 +6,7 @@ interface BaseKeys{
 	right:boolean;
 }
 
-export class InputManager extends BaseManager{
+export class EventManager extends BaseManager{
 
 	public mousePos:Vector2 = new Vector2();
 	public baseKeys:BaseKeys = {left:false, right:false};

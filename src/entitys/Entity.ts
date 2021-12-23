@@ -1,18 +1,33 @@
-import {Vector2, Vector3} from 'three';
+import {Vector2, Vector3, Object3D} from 'three';
+import {SimpleEventEmitter} from '../core/EventEmitter';
 
-export enum EntityType{
-	mesh,
-	sprite,
-	particle,
-	text
-}
+export class Entity extends SimpleEventEmitter{
 
-export class Entity{
-
-	public type:EntityType;
-	public isStatic:boolean;
+	public id:number = -1;
+	public readonly isAddToScene = true;
 
 	constructor()
+	{
+		super();
+	}
+
+	onAdd(parent:Object3D)
+	{
+
+	}
+
+	onAddRaycast(group:Object3D)
+	{
+
+	}
+
+	onRemoveRaycast(group:Object3D)
+	{
+
+	}
+
+
+	onRemove()
 	{
 
 	}
@@ -22,17 +37,42 @@ export class Entity{
 
 	}
 
-	setRotation(z:number)
+	setPositionXY(x:number,y:number)
 	{
 
 	}
 
 	getPosition()
 	{
+		return new Vector3();
+	}
+
+	setVisible(val:boolean)
+	{
 
 	}
 
-	getRotation()
+	setColor(color:string, alpha = -1)
+	{
+
+	}
+
+	setRotation(angle:number)
+	{
+
+	}
+
+	setScale(scale:number)
+	{
+
+	}
+
+	clone():Entity
+	{
+		return new Entity();
+	}
+
+	destroy()
 	{
 
 	}

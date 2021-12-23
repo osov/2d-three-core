@@ -12,7 +12,7 @@ export class CameraHelper extends BaseHelper{
 		super(v);
 	}
 
-	centerCamera(x:number, y:number)
+	private centerCamera(x:number, y:number)
 	{
 		this.gm.camera.position.set(x, y, this.gm.camera.position.z );
 		this.lookingAt.x = x;

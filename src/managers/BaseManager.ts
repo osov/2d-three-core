@@ -7,4 +7,5 @@ export class BaseManager extends SimpleEventEmitter{
 		super();
 	}
 
+
 }
