@@ -1,5 +1,5 @@
 import {
-	Mesh,Object3D,
+	Mesh,Object3D, MeshBasicMaterial,
 	TextureLoader, Texture, CanvasTexture, RepeatWrapping} from 'three';
 import {BaseManager} from './BaseManager';
 import {GameManager} from './GameManager';
@@ -11,6 +11,7 @@ export class ResourceManager extends BaseManager{
 
 	public fontUrl:string = '';
 	private readonly textures:{[key: string]: Texture} = {};
+	private badMaterial:MeshBasicMaterial;
 
 	constructor()
 	{
@@ -34,6 +35,7 @@ export class ResourceManager extends BaseManager{
 			textureCanvas.wrapT = RepeatWrapping;
 			textureCanvas.name = "bad_texture";
 			this.textures['bad'] = textureCanvas;
+			this.badMaterial = new MeshBasicMaterial({map:this.textures['bad']});
 		}
 		this.fontUrl = fontUrl;
 		await this.preloadFont(fontUrl);
@@ -92,10 +94,15 @@ export class ResourceManager extends BaseManager{
 	{
 		if (!this.textures[name])
 		{
-			this.warn("Текстура не загружена:", name);
+			console.warn("Текстура не загружена:", name);
 			return this.textures['bad'];
 		}
 		return this.textures[name];
+	}
+
+	getMaterial(name:string):MeshBasicMaterial
+	{
+		return this.badMaterial;
 	}
 
 }

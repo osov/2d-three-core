@@ -20,7 +20,6 @@ export class RenderManager extends EventManager{
 	public readonly scene:Scene;
 	public readonly camera:Camera;
 	public readonly renderer:WebGLRenderer;
-	public readonly raycastGroup:Group;
 	public readonly resourceManager:ResourceManager;
 	public readonly entitysManager:EntitysManager;
 	private readonly params:InitParams;
@@ -31,16 +30,16 @@ export class RenderManager extends EventManager{
 		this.params = params;
 		const width = window.innerWidth;
 		const height =  window.innerHeight;
-		const isPerspective = params.isPerspective === true;
-		if (isPerspective)
+		if (params.isPerspective)
 		{
 			const cam = new PerspectiveCamera(75, width / height, 0.1, 100)
-			cam.position.z = 2;
+			cam.position.z = 1;
 			this.camera = cam;
 		}
 		else
 		{
 			const cam = new OrthographicCamera(0, 0, 0, 0, -10, 10);
+			cam.position.z = 1;
 			cam.zoom = 1;
 			this.camera = cam;
 		}
@@ -49,8 +48,6 @@ export class RenderManager extends EventManager{
 		this.renderer = new WebGLRenderer();
 		this.renderer.setSize(width, height);
 		this.renderer.setClearColor( 0xffffff, 1 );
-		this.raycastGroup = new Group();
-		this.scene.add(this.raycastGroup);
 
 		this.container = document.body;
 		this.container.appendChild(this.renderer.domElement);
@@ -71,8 +68,7 @@ export class RenderManager extends EventManager{
 	{
 		const width = this.container.clientWidth;
 		const height =  this.container.clientHeight;
-		const isPerspective = this.params.isPerspective === true;
-		if (isPerspective)
+		if (this.params.isPerspective)
 		{
 			(this.camera as PerspectiveCamera).aspect = width / height;
 			(this.camera as PerspectiveCamera).updateProjectionMatrix();
@@ -95,9 +91,9 @@ export class RenderManager extends EventManager{
 	}
 
 
-// ----------------------------------------------------------------------------------------------------------
-// Adding
-// ----------------------------------------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------------------------------
+	// Adding
+	// ----------------------------------------------------------------------------------------------------------
 
 	async loadTextures(path:string, names:string[])
 	{
@@ -109,9 +105,9 @@ export class RenderManager extends EventManager{
 		return this.entitysManager.registerPrefab(name, prefab);
 	}
 
-	addEntity(name:string, pos:Vector3, angle:number = 0, parent:Object3D|null = null, addToRaycast = false, id:number = -1)
+	addEntity(name:string, pos:Vector3, angle:number = 0, parent:Object3D|null = null, id:number = -1)
 	{
-		return this.entitysManager.addEntity(name, pos, angle, parent, addToRaycast, id);
+		return this.entitysManager.addEntity(name, pos, angle, parent, id);
 	}
 
 	remove(entity:Entity)
@@ -119,10 +115,14 @@ export class RenderManager extends EventManager{
 		return this.entitysManager.remove(entity);
 	}
 
+	clearScene(fullClear = true)
+	{
+		return this.entitysManager.clearScene(fullClear);
+	}
 
-// ----------------------------------------------------------------------------------------------------------
-// propertys
-// ----------------------------------------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------------------------------
+	// propertys
+	// ----------------------------------------------------------------------------------------------------------
 
 	setBgColor(color:number)
 	{

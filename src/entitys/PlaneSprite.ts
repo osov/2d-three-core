@@ -1,26 +1,22 @@
-import {Vector2, Vector3, Object3D, Sprite, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Texture, RepeatWrapping} from 'three';
+import { Object3D,  Mesh, MeshBasicMaterial, PlaneBufferGeometry, Raycaster, Intersection} from 'three';
 import {BaseMesh} from './BaseMesh';
 
 
 export class PlaneSprite extends BaseMesh{
 
-	public readonly mesh:Mesh;
-	private texture:Texture;
-
-	constructor(texture:Texture)
+	constructor(material:MeshBasicMaterial)
 	{
 		super();
-		this.texture = texture;
-		const geometry = new PlaneBufferGeometry( 1, 1 );
-		const material = new MeshBasicMaterial( {color: 0xffffff, map:texture} );
-		if (material.map)
-			material.map.wrapS = material.map.wrapT = RepeatWrapping;
-		this.mesh = new Mesh(geometry, material);
+		this.material = material;
+		this.geometry = new PlaneBufferGeometry( 1, 1 );
+		Mesh.prototype.updateMorphTargets.apply(this);
 	}
 
-	clone():PlaneSprite
+	makeInstance()
 	{
-		return new PlaneSprite(this.texture);
+		var copy = new PlaneSprite(this.material);
+		this.makeChildsInstance(copy);
+		return copy;
 	}
 
 }

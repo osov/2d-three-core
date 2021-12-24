@@ -1,7 +1,7 @@
 import {Vector2} from 'three';
-import {SimpleEventEmitter} from '../core/EventEmitter';
+import {Entity} from './Entity';
 
-export class ParticleList extends SimpleEventEmitter{
+export class ParticleList extends Entity{
 
 	constructor()
 	{

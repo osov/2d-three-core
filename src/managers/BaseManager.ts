@@ -1,6 +1,6 @@
-import {SimpleEventEmitter} from '../core/EventEmitter';
+import {EventDispatcher} from 'three';
 
-export class BaseManager extends SimpleEventEmitter{
+export class BaseManager extends EventDispatcher{
 
 	constructor()
 	{

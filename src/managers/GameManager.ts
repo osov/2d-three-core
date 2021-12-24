@@ -3,11 +3,13 @@ import {RenderManager, InitParams} from './RenderManager';
 import {CameraHelper} from '../helpers/CameraHelper';
 import {WrapHelper, WrapInfo} from '../helpers/WrapHelper';
 import {SelectorHelper} from '../helpers/SelectorHelper';
+import {Entity} from '../entitys/Entity';
 import * as gUtils from '../core/gameUtils';
 
 interface WorldSettings{
 	worldWidth:number;
 	worldHeight:number;
+	worldWrap:boolean;
 	viewDistance:number;
 	cameraSpeed:number;
 	fontUrl:string;
@@ -50,6 +52,17 @@ export class GameManager extends RenderManager{
 	// ----------------------------------------------------------------------------------------------------------
 	// Core
 	// ----------------------------------------------------------------------------------------------------------
+
+	addToRaycast(entity:Entity)
+	{
+		this.selectorHelper.add(entity)
+	}
+
+	clearScene(fullClear = true)
+	{
+		super.clearScene(fullClear);
+		this.selectorHelper.clear();
+	}
 
 	pointToScreen(point:Vector3|Vector2)
 	{
@@ -96,8 +109,12 @@ export class GameManager extends RenderManager{
 
 	update(deltaTime:number, now:number)
 	{
-		this.emit("onBeforeRender", deltaTime, now);
+		this.dispatchEvent({type:"onBeforeRender", 'deltaTime': deltaTime, 'now':now});
+
+		if (this.settings.worldWrap)
+			this.wrapHelper.processWrapEntitys(deltaTime);
+
 		this.renderer.render(this.scene, this.camera);
-		this.emit("onAfterRender", deltaTime, now);
+		this.dispatchEvent({type:"onAfterRender", 'deltaTime': deltaTime, 'now':now});
 	}
 }

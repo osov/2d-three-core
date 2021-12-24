@@ -1,79 +1,87 @@
 import {Vector2, Vector3, Object3D} from 'three';
-import {SimpleEventEmitter} from '../core/EventEmitter';
 
-export class Entity extends SimpleEventEmitter{
+export class Entity extends Object3D{
 
-	public id:number = -1;
-	public readonly isAddToScene = true;
+	public idEntity:number = -1;
+	public prefabName:string;
 
 	constructor()
 	{
 		super();
 	}
 
-	onAdd(parent:Object3D)
+	doUpdate(deltaTime:number)
 	{
 
 	}
 
-	onAddRaycast(group:Object3D)
+	addToParent(parent:Object3D)
 	{
-
+		parent.add(this);
 	}
 
-	onRemoveRaycast(group:Object3D)
+	removeFromParent()
 	{
-
+		return super.removeFromParent();
 	}
 
-
-	onRemove()
-	{
-
-	}
 
 	setPosition(pos:Vector2|Vector3)
 	{
-
+		if (pos instanceof Vector2)
+			this.position.set(pos.x, pos.y, this.position.z);
+		else
+			this.position.copy(pos);
 	}
 
 	setPositionXY(x:number,y:number)
 	{
-
+		this.position.set(x, y, this.position.z);
 	}
 
 	getPosition()
 	{
-		return new Vector3();
+		return this.position;
 	}
 
 	setVisible(val:boolean)
 	{
-
-	}
-
-	setColor(color:string, alpha = -1)
-	{
-
+		this.visible = val;
 	}
 
 	setRotation(angle:number)
 	{
-
+		this.rotation.z = angle;
 	}
 
 	setScale(scale:number)
 	{
-
+		this.scale.setScalar(scale);
 	}
 
-	clone():Entity
+	protected makeChildsInstance(dst:Entity)
 	{
-		return new Entity();
+		for (var i = 0; i < this.children.length; ++i)
+		{
+			if (!(this.children[i] instanceof Entity))
+				continue;
+			var childSrc = this.children[i] as Entity;
+			var copy = childSrc.makeInstance();
+			dst.add(copy);
+			copy.copy(childSrc, false);
+		}
+	}
+
+	makeInstance()
+	{
+		var copy = new Entity();
+		this.makeChildsInstance(copy);
+		return copy;
 	}
 
 	destroy()
 	{
 
 	}
+
 }

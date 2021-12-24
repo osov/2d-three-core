@@ -4,7 +4,8 @@ const {Text} = require('troika-three-text');
 
 export class SimpleText extends BaseMesh{
 
-	public readonly mesh:Mesh;
+	protected isMesh = false;
+	public readonly mesh:any;
 
 	constructor(text:string, fontUrl:string, fontSize = 16)
 	{
@@ -16,17 +17,26 @@ export class SimpleText extends BaseMesh{
 		mesh.color = 0xf0fff0;
 		mesh.sync();
 		mesh.anchorX = '50%';
+		this.add(mesh);
 		this.mesh = mesh;
 	}
 
 	setText(text:string)
 	{
-		(this.mesh as any).text = text;
+		this.mesh.text = text;
 	}
 
-	clone():SimpleText
+	makeInstance()
 	{
-		return new SimpleText((this.mesh as any).text, (this.mesh as any).font, (this.mesh as any).fontSize);
+		var copy = new SimpleText(this.mesh.text, this.mesh.font, this.mesh.fontSize);
+		this.makeChildsInstance(copy);
+		return copy;
+	}
+
+	destroy()
+	{
+		super.destroy();
+		this.mesh.dispose();
 	}
 
 }

@@ -72,19 +72,19 @@ export class EventManager extends BaseManager{
 	protected onMove(clientX = 0,clientY = 0)
 	{
 		this.setPointers(clientX, clientY);
-		this.emit("onMove", this.mousePos);
+		this.dispatchEvent({type:"onMove", 'position': this.mousePos});
 	}
 
 	protected onInputDown(clientX = 0, clientY = 0)
 	{
 		this.setPointers(clientX, clientY);
-		this.emit("onDown", this.mousePos);
+		this.dispatchEvent({type:"onDown", 'position': this.mousePos});
 	}
 
 	private onInputUp(clientX = 0, clientY = 0)
 	{
 		this.setPointers(clientX, clientY);
-		this.emit("onUp", this.mousePos);
+		this.dispatchEvent({type:"onUp", 'position': this.mousePos});
 	}
 
 	protected setPointers(clientX = 0,clientY = 0)

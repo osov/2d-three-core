@@ -1,7 +1,7 @@
-import {SimpleEventEmitter} from '../core/EventEmitter';
+import {EventDispatcher} from 'three';
 import {GameManager} from '../managers/GameManager';
 
-export class BaseHelper extends SimpleEventEmitter{
+export class BaseHelper extends EventDispatcher{
 
 	protected gm:GameManager;
 

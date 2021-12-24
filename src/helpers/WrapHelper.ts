@@ -1,5 +1,6 @@
 import {Vector2, Vector3,  Object3D, Line, LineBasicMaterial, BufferGeometry} from 'three';
 import {BaseHelper} from './BaseHelper';
+import {GameManager} from '../managers/GameManager';
 
 export interface WrapSettings{
 	worldWidth:number;
@@ -33,9 +34,9 @@ export interface WrapInfo {
 export class WrapHelper extends BaseHelper{
 
 
-	constructor(v:any)
+	constructor(gm:GameManager)
 	{
-		super(v);
+		super(gm);
 	}
 
 	drawDebugBorder(parent:Object3D)
@@ -149,6 +150,30 @@ export class WrapHelper extends BaseHelper{
 		if (pos.y <= -h)
 			pos.y += 2*h;
 		return pos;
+	}
+
+	processWrapEntitys(deltaTime:number)
+	{
+		// todo
+		/*var em = this.gm.entitysManager;
+		var idLocal = em.idLocalEntity;
+		if (idLocal > -1)
+		{
+			var le = em.entitys[idLocal];
+			if (le)
+				le.doUpdate(deltaTime);
+		}
+
+		var wrapInfo = this.gm.getWrapInfo();
+		var pos = new Vector3();
+
+		for (var id in em.entitys)
+		{
+			var e = em.entitys[id];
+			pos.copy(e.getPosition());
+			this.gm.getWrapPos(wrapInfo, pos);
+			e.setPositionXY(pos.x, pos.y);
+		}*/
 	}
 
 }
