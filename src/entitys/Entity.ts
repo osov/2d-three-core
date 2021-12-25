@@ -10,10 +10,6 @@ export class Entity extends Object3D{
 		super();
 	}
 
-	doUpdate(deltaTime:number)
-	{
-
-	}
 
 	addToParent(parent:Object3D)
 	{

@@ -1,5 +1,7 @@
 import {Vector2, Vector3, Camera} from 'three';
 
+export const deepPosition = new Vector3(9999999,9999999);
+
 export function pointToScreen(point:Vector3|Vector2, camera:Camera, container:HTMLElement)
 {
 	var w = container.clientWidth;

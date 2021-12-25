@@ -43,7 +43,7 @@ export class EntitysManager extends BaseManager{
 		return true;
 	}
 
-	private createPrefab(name:string, pos:Vector3, angle:number = 0)
+	private createPrefab(name:string)
 	{
 		var entity:Entity;
 		if (!this.prefabs[name])
@@ -56,8 +56,6 @@ export class EntitysManager extends BaseManager{
 			var prefab = this.prefabs[name];
 			entity = prefab.makeInstance();
 		}
-		entity.setPosition(pos);
-		entity.setRotation(angle);
 		return entity;
 	}
 
@@ -67,11 +65,13 @@ export class EntitysManager extends BaseManager{
 			id = this.lastId++;
 		if (this.entitys[id])
 			console.warn("Сущность с таким ид существует", id, this.entitys[id]);
-		var entity = this.createPrefab(name, pos, angle);
+		var entity = this.createPrefab(name);
 		entity.idEntity = id;
 		entity.prefabName = name;
 		this.entitys[id] = entity;
-		entity.addToParent(parent === null ? this.renderManager.scene : parent)
+		entity.addToParent(parent === null ? this.renderManager.scene : parent);
+		entity.setPosition(pos);
+		entity.setRotation(angle);
 		this.renderManager.dispatchEvent({type:'onAddEntity', entity:entity});
 		return entity;
 	}
