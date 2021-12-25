@@ -1,8 +1,9 @@
-import {Vector2, Vector3, Object3D,Raycaster} from 'three';
+import {Vector2, Vector3, Object3D,Raycaster, Event, EventListener} from 'three';
 import {RenderManager, InitParams} from './RenderManager';
 import {CameraHelper} from '../helpers/CameraHelper';
 import {WrapHelper, WrapInfo} from '../helpers/WrapHelper';
 import {SelectorHelper} from '../helpers/SelectorHelper';
+import {LooperHelper, EventUpdate} from '../helpers/LooperHelper';
 import {Entity} from '../entitys/Entity';
 import * as gUtils from '../core/gameUtils';
 
@@ -21,8 +22,7 @@ export class GameManager extends RenderManager{
 	public cameraHelper:CameraHelper;
 	public wrapHelper:WrapHelper;
 	public selectorHelper:SelectorHelper;
-
-	private lastUpdate:number = 0;
+	private looperHelper:LooperHelper;
 
 	constructor(params:InitParams = {isPerspective:false})
 	{
@@ -36,17 +36,20 @@ export class GameManager extends RenderManager{
 		this.cameraHelper = new CameraHelper(this);
 		this.wrapHelper = new WrapHelper(this);
 		this.selectorHelper = new SelectorHelper(this);
+		this.looperHelper = new LooperHelper(this);
 
 		this.cameraHelper.init();
 		this.wrapHelper.init();
 		this.selectorHelper.init();
+		this.looperHelper.init();
+
 
 		this.wrapHelper.drawDebugBorder(this.scene);
 	}
 
 	start()
 	{
-		this.animate(0);
+		this.looperHelper.addEventListener('update', this.updateEvent.bind(this) );
 	}
 
 	// ----------------------------------------------------------------------------------------------------------
@@ -99,12 +102,10 @@ export class GameManager extends RenderManager{
 		this.container.requestFullscreen();
 	}
 
-	animate(now:number)
+	updateEvent(event:Event)
 	{
-		const deltaTime = now - this.lastUpdate;
-		this.lastUpdate = now;
-		this.update(deltaTime, now);
-		requestAnimationFrame(this.animate.bind(this));
+		var e = event as EventUpdate;
+		this.update(e.deltaTime, e.now);
 	}
 
 	update(deltaTime:number, now:number)
@@ -115,6 +116,7 @@ export class GameManager extends RenderManager{
 			this.wrapHelper.processWrapEntitys(deltaTime);
 
 		this.renderer.render(this.scene, this.camera);
+
 		this.dispatchEvent({type:"onAfterRender", 'deltaTime': deltaTime, 'now':now});
 	}
 }

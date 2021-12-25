@@ -20,8 +20,8 @@ export class ResourceManager extends BaseManager{
 
 	async init(fontUrl:string)
 	{
-		var imageCanvas = document.createElement( "canvas" );
-		var context = imageCanvas.getContext( "2d" );
+		var imageCanvas = document.createElement("canvas");
+		var context = imageCanvas.getContext("2d");
 		if (context != null)
 		{
 			imageCanvas.width = imageCanvas.height = 128;
@@ -38,7 +38,8 @@ export class ResourceManager extends BaseManager{
 			this.badMaterial = new MeshBasicMaterial({map:this.textures['bad']});
 		}
 		this.fontUrl = fontUrl;
-		await this.preloadFont(fontUrl);
+		if (this.fontUrl != '')
+			await this.preloadFont(fontUrl);
 	}
 
 	private preloadFont(url:string)

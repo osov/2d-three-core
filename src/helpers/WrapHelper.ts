@@ -154,14 +154,11 @@ export class WrapHelper extends BaseHelper{
 
 	processWrapEntitys(deltaTime:number)
 	{
-		// todo
-		/*var em = this.gm.entitysManager;
+		var em = this.gm.entitysManager;
 		var idLocal = em.idLocalEntity;
 		if (idLocal > -1)
 		{
 			var le = em.entitys[idLocal];
-			if (le)
-				le.doUpdate(deltaTime);
 		}
 
 		var wrapInfo = this.gm.getWrapInfo();
@@ -169,11 +166,13 @@ export class WrapHelper extends BaseHelper{
 
 		for (var id in em.entitys)
 		{
+			if (Number(id) == idLocal)
+				continue;
 			var e = em.entitys[id];
 			pos.copy(e.getPosition());
 			this.gm.getWrapPos(wrapInfo, pos);
 			e.setPositionXY(pos.x, pos.y);
-		}*/
+		}
 	}
 
 }
