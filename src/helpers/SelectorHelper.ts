@@ -1,6 +1,6 @@
 import {Vector2, Object3D, Raycaster, Camera, Group} from 'three';
 import {BaseHelper} from './BaseHelper';
-import {GameManager} from '../managers/GameManager';
+import {GameSystem} from '../systems/GameSystem';
 import {Entity} from '../entitys/Entity';
 
 export class SelectorHelper extends BaseHelper{
@@ -12,7 +12,7 @@ export class SelectorHelper extends BaseHelper{
 	private raycaster = new Raycaster();
 	private list:Entity[] = [];
 
-	constructor(gm:GameManager)
+	constructor(gm:GameSystem)
 	{
 		super(gm);
 	}

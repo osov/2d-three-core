@@ -1,11 +1,11 @@
 import {EventDispatcher} from 'three';
-import {GameManager} from '../managers/GameManager';
+import {GameSystem} from '../systems/GameSystem';
 
 export class BaseHelper extends EventDispatcher{
 
-	protected gm:GameManager;
+	protected gm:GameSystem;
 
-	constructor(manager:GameManager)
+	constructor(manager:GameSystem)
 	{
 		super();
 		this.gm = manager;

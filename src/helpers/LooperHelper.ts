@@ -1,6 +1,6 @@
 import {Vector2, Vector3,  Object3D, Line, LineBasicMaterial, BufferGeometry, Event} from 'three';
 import {BaseHelper} from './BaseHelper';
-import {GameManager} from '../managers/GameManager';
+import {GameSystem} from '../systems/GameSystem';
 import * as t from 'three';
 
 export interface EventUpdate extends t.Event{
@@ -14,7 +14,7 @@ export class LooperHelper extends BaseHelper{
 	private idTimer: number;
 	private lastUpdate:number = 0;
 
-	constructor(gm:GameManager)
+	constructor(gm:GameSystem)
 	{
 		super(gm);
 	}

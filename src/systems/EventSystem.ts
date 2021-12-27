@@ -1,12 +1,12 @@
 import {Vector2} from 'three';
-import {BaseManager} from './BaseManager';
+import {BaseSystem} from './BaseSystem';
 
 interface BaseKeys{
 	left:boolean;
 	right:boolean;
 }
 
-export class EventManager extends BaseManager{
+export class EventSystem extends BaseSystem{
 
 	public mousePos:Vector2 = new Vector2();
 	public baseKeys:BaseKeys = {left:false, right:false};

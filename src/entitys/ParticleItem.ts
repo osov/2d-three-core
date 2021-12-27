@@ -1,29 +1,29 @@
 import {Vector2, Vector3, Object3D, PointsMaterial, BufferGeometry,Float32BufferAttribute, Points} from 'three';
-import {Entity} from './Entity';
-import {ParticlePool} from './ParticlePool';
+import {Entity} from '../entitys/Entity';
+import {ParticlesStack} from './ParticlesStack';
 import {deepPosition} from '../core/gameUtils';
 
 export class ParticleItem extends Entity{
 
-	private pool:ParticlePool;
+	private stack:ParticlesStack;
 	private idParticle:number;
 
-	constructor(pool:ParticlePool)
+	constructor(stack:ParticlesStack)
 	{
 		super();
-		this.pool = pool;
+		this.stack = stack;
 	}
 
 	addToParent(parent:Object3D)
 	{
-		this.idParticle = this.pool.getFreeIndex();
+		this.idParticle = this.stack.getFreeIndex();
 		if (this.idParticle == -1)
 			console.warn("Частица не выдана:", this);
 	}
 
 	removeFromParent()
 	{
-		this.pool.freeIndex(this.idParticle);
+		this.stack.freeIndex(this.idParticle);
 		this.idParticle = -1;
 		return this;
 	}
@@ -31,31 +31,31 @@ export class ParticleItem extends Entity{
 	setPosition(pos:Vector2|Vector3)
 	{
 		super.setPosition(pos);
-		this.pool.setIndexPosition(this.idParticle, pos);
+		this.stack.setIndexPosition(this.idParticle, pos);
 	}
 
 	setPositionXY(x:number,y:number)
 	{
 		super.setPositionXY(x,y);
-		this.pool.setIndexPosition(this.idParticle, new Vector2(x,y));
+		this.stack.setIndexPosition(this.idParticle, new Vector2(x,y));
 	}
 
 
 	setVisible(val:boolean)
 	{
 		super.setVisible(val);
-		this.pool.setIndexPosition(this.idParticle, val ? this.position : deepPosition);
+		this.stack.setIndexPosition(this.idParticle, val ? this.position : deepPosition);
 	}
 
 	setRotation(angle:number)
 	{
 		super.setRotation(angle);
-		this.pool.setIndexRotation(this.idParticle, angle);
+		this.stack.setIndexRotation(this.idParticle, angle);
 	}
 
 	makeInstance()
 	{
-		var copy = new ParticleItem(this.pool);
+		var copy = new ParticleItem(this.stack);
 		this.makeChildsInstance(copy);
 		return copy;
 	}

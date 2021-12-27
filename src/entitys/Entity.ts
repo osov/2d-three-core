@@ -55,6 +55,11 @@ export class Entity extends Object3D{
 		this.scale.setScalar(scale);
 	}
 
+	setRenderOrder(index:number)
+	{
+		this.renderOrder = index;
+	}
+
 	protected makeChildsInstance(dst:Entity)
 	{
 		for (var i = 0; i < this.children.length; ++i)

@@ -1,6 +1,6 @@
 import {Vector2, Vector3} from 'three';
 import {BaseHelper} from './BaseHelper';
-import {GameManager} from '../managers/GameManager';
+import {GameSystem} from '../systems/GameSystem';
 
 export class CameraHelper extends BaseHelper{
 
@@ -8,7 +8,7 @@ export class CameraHelper extends BaseHelper{
 	public readonly bgPhase:Vector2 = new Vector2();
 	public readonly bgOffset:Vector2 = new Vector2();
 
-	constructor(gm:GameManager)
+	constructor(gm:GameSystem)
 	{
 		super(gm);
 	}

@@ -1,6 +1,6 @@
 import {EventDispatcher} from 'three';
 
-export class BaseManager extends EventDispatcher{
+export class BaseSystem extends EventDispatcher{
 
 	constructor()
 	{

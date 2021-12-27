@@ -1,5 +1,5 @@
-import {Vector2, Vector3, Object3D,Raycaster, Event, EventListener} from 'three';
-import {RenderManager, InitParams} from './RenderManager';
+import {Vector2, Vector3, Object3D,Raycaster, Event, EventListener, PointsMaterial} from 'three';
+import {RenderSystem, InitParams} from './RenderSystem';
 import {CameraHelper} from '../helpers/CameraHelper';
 import {WrapHelper, WrapInfo} from '../helpers/WrapHelper';
 import {SelectorHelper} from '../helpers/SelectorHelper';
@@ -16,7 +16,7 @@ interface WorldSettings{
 	fontUrl:string;
 }
 
-export class GameManager extends RenderManager{
+export class GameSystem extends RenderSystem{
 
 	public settings:WorldSettings;
 	public cameraHelper:CameraHelper;
@@ -97,6 +97,16 @@ export class GameManager extends RenderManager{
 		return this.wrapHelper.wrapPosition(pos);
 	}
 
+	registerParticlePool(name:string, material:PointsMaterial, maxCount:number)
+	{
+		return this.entitysSystem.registerParticlePool(name, material, maxCount);
+	}
+
+	registerPrefab(name:string, prefab:Entity)
+	{
+		return this.entitysSystem.registerPrefab(name, prefab);
+	}
+
 	doFull()
 	{
 		this.container.requestFullscreen();
@@ -111,6 +121,7 @@ export class GameManager extends RenderManager{
 	update(deltaTime:number, now:number)
 	{
 		this.dispatchEvent({type:"onBeforeRender", 'deltaTime': deltaTime, 'now':now});
+		this.entitysSystem.update(deltaTime);
 
 		if (this.settings.worldWrap)
 			this.wrapHelper.processWrapEntitys(deltaTime);

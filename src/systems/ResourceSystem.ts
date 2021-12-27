@@ -1,13 +1,13 @@
 import {
 	Mesh,Object3D, MeshBasicMaterial,
 	TextureLoader, Texture, CanvasTexture, RepeatWrapping} from 'three';
-import {BaseManager} from './BaseManager';
-import {GameManager} from './GameManager';
+import {BaseSystem} from './BaseSystem';
+import {GameSystem} from './GameSystem';
 import {Entity} from '../entitys/Entity';
 const {preloadFont} = require('troika-three-text');
 
 
-export class ResourceManager extends BaseManager{
+export class ResourceSystem extends BaseSystem{
 
 	public fontUrl:string = '';
 	private readonly textures:{[key: string]: Texture} = {};

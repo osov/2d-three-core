@@ -1,6 +1,6 @@
 import {Vector2, Vector3,  Object3D, Line, LineBasicMaterial, BufferGeometry} from 'three';
 import {BaseHelper} from './BaseHelper';
-import {GameManager} from '../managers/GameManager';
+import {GameSystem} from '../systems/GameSystem';
 
 export interface WrapSettings{
 	worldWidth:number;
@@ -34,7 +34,7 @@ export interface WrapInfo {
 export class WrapHelper extends BaseHelper{
 
 
-	constructor(gm:GameManager)
+	constructor(gm:GameSystem)
 	{
 		super(gm);
 	}
@@ -154,7 +154,7 @@ export class WrapHelper extends BaseHelper{
 
 	processWrapEntitys(deltaTime:number)
 	{
-		var em = this.gm.entitysManager;
+		var em = this.gm.entitysSystem;
 		var idLocal = em.idLocalEntity;
 		if (idLocal > -1)
 		{

@@ -1,17 +1,16 @@
-import {Vector2, Vector3, Object3D, PointsMaterial, BufferGeometry,Float32BufferAttribute, Points} from 'three';
-import {Entity} from './Entity';
+import { Vector2, Vector3, Object3D, PointsMaterial, BufferGeometry,Float32BufferAttribute, Points} from 'three';
 import {deepPosition} from '../core/gameUtils';
+import {Entity} from './Entity';
 
-export class ParticlePool extends Entity{
+export class ParticlesStack extends Entity{
 
 	public geometry:BufferGeometry;
 	public material:PointsMaterial;
 	protected isPoints = true;
-	private count:number;
 	private freeIds:number[] = [];
 	private isChanged = true;
 
-	constructor(material:PointsMaterial, count:number)
+	constructor(material:PointsMaterial, maxCount:number)
 	{
 		super();
 		material.onBeforeCompile = shader =>
@@ -59,10 +58,9 @@ export class ParticlePool extends Entity{
 				);
 		};
 
-		this.count = count;
 		const vertices = [];
 		const rotations = [];
-		for ( let i = 0; i < count; i ++ ) {
+		for ( let i = 0; i < maxCount; i ++ ) {
 
 			vertices.push(deepPosition.x, deepPosition.y, deepPosition.z);
 			rotations.push(0);
@@ -76,13 +74,6 @@ export class ParticlePool extends Entity{
 		Points.prototype.updateMorphTargets.apply(this);
 	}
 
-	copy(source:any, recursive:boolean = true)
-	{
-		super.copy( source, recursive );
-		this.material = source.material;
-		this.geometry = source.geometry;
-		return this;
-	}
 
 	setIndexPosition(index:number, pos:Vector2|Vector3, apply = false)
 	{
@@ -131,7 +122,7 @@ export class ParticlePool extends Entity{
 		this.freeIds.push(index);
 	}
 
-	update()
+	update(deltaTime:number)
 	{
 		if (!this.isChanged)
 			return;
