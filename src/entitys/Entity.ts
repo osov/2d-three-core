@@ -1,6 +1,7 @@
-import {Vector2, Vector3, Object3D} from 'three';
+import {Vector2, Vector3} from 'three';
+import {BaseEntity} from 'ecs-threejs';
 
-export class Entity extends Object3D{
+export class Entity extends BaseEntity{
 
 	public idEntity:number = -1;
 	public prefabName:string;
@@ -8,56 +9,6 @@ export class Entity extends Object3D{
 	constructor()
 	{
 		super();
-	}
-
-
-	addToParent(parent:Object3D)
-	{
-		parent.add(this);
-	}
-
-	removeFromParent()
-	{
-		return super.removeFromParent();
-	}
-
-
-	setPosition(pos:Vector2|Vector3)
-	{
-		if (pos instanceof Vector2)
-			this.position.set(pos.x, pos.y, this.position.z);
-		else
-			this.position.copy(pos);
-	}
-
-	setPositionXY(x:number,y:number)
-	{
-		this.position.set(x, y, this.position.z);
-	}
-
-	getPosition()
-	{
-		return this.position;
-	}
-
-	setVisible(val:boolean)
-	{
-		this.visible = val;
-	}
-
-	setRotation(angle:number)
-	{
-		this.rotation.z = angle;
-	}
-
-	setScale(scale:number)
-	{
-		this.scale.setScalar(scale);
-	}
-
-	setRenderOrder(index:number)
-	{
-		this.renderOrder = index;
 	}
 
 	protected makeChildsInstance(dst:Entity)

@@ -1,11 +1,2 @@
-import {EventDispatcher} from 'three';
-
-export class BaseSystem extends EventDispatcher{
-
-	constructor()
-	{
-		super();
-	}
-
-
-}
+import {BaseSystem} from 'ecs-threejs';
+export {BaseSystem};
