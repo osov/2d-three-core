@@ -5,4 +5,4 @@ import {PlaneSprite} from './entitys/PlaneSprite';
 import {SimpleText} from './entitys/SimpleText';
 import * as gUtils from './core/gameUtils';
 
-export {gUtils, GameSystem, Entity, PlaneSprite, SimpleText}
+export {gUtils, GameSystem, Entity, PlaneSprite, SimpleText};
