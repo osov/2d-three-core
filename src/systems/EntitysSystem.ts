@@ -5,6 +5,7 @@ import {Entity} from '../entitys/Entity';
 import {PlaneSprite} from '../entitys/PlaneSprite';
 import {PoolsManager} from '../pool/PoolsManager';
 
+const startLocalId = 65535;
 
 export class EntitysSystem extends BaseSystem{
 
@@ -12,7 +13,7 @@ export class EntitysSystem extends BaseSystem{
 	public dynamicEntitys:{[key: number]: Entity} = {};
 	public idLocalEntity:number = -1;
 
-	private lastId:number = 0;
+	private lastId:number = startLocalId;
 	private renderSystem:RenderSystem;
 	private poolsManager:PoolsManager;
 
@@ -95,6 +96,14 @@ export class EntitysSystem extends BaseSystem{
 			this.poolsManager.putPoolItem(entity);
 	}
 
+	getEntityById(id:number)
+	{
+		if (this.entitys[id] === undefined)
+			return false;
+		else
+			return this.entitys[id];
+	}
+
 
 	clearScene(fullClear:boolean = true)
 	{
@@ -117,7 +126,7 @@ export class EntitysSystem extends BaseSystem{
 		}
 		this.entitys = {};
 		this.dynamicEntitys = {};
-		this.lastId = 0;
+		this.lastId = startLocalId;
 		this.poolsManager.clear();
 	}
 

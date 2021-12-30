@@ -7,7 +7,7 @@ export class ParticlesPool extends BasePool{
 	private stack:ParticlesStack
 	constructor(src:Entity, stack:ParticlesStack)
 	{
-		super(src, 0, -1);
+		super(src, 0);
 		this.stack = stack;
 	}
 

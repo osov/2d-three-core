@@ -118,6 +118,7 @@ export class GameSystem extends RenderSystem{
 		this.update(e.deltaTime, e.now);
 	}
 
+	// Очередь обработки: network, time system, pool, wrap, render
 	update(deltaTime:number, now:number)
 	{
 		this.dispatchEvent({type:"onBeforeRender", 'deltaTime': deltaTime, 'now':now});
