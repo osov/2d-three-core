@@ -3,7 +3,6 @@ import {BaseEntity} from 'ecs-threejs';
 
 export class Entity extends BaseEntity{
 
-	public idEntity:number = -1;
 	public prefabName:string;
 
 	constructor()
