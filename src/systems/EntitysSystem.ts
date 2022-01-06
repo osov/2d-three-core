@@ -61,7 +61,7 @@ export class EntitysSystem extends BaseSystem{
 		return entity;
 	}
 
-	addEntity(entity:Entity, pos:Vector3 = new Vector3(), angle:number = 0, parent:Object3D|null = null, id:number = -1)
+	addEntity(entity:Entity, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1)
 	{
 		if (id == -1)
 			id = this.lastId++;
@@ -71,15 +71,15 @@ export class EntitysSystem extends BaseSystem{
 		this.entitys[id] = entity;
 		entity.addToParent(parent === null ? this.renderSystem.scene : parent);
 		entity.setPosition(pos);
-		entity.setRotation(angle);
+		entity.setRotationDeg(angleDeg);
 		this.renderSystem.dispatchEvent({type:'onAddedEntity', entity:entity});
 		return entity;
 	}
 
-	addEntityByName(name:string, pos:Vector3, angle:number = 0, parent:Object3D|null = null, id:number = -1)
+	addEntityByName(name:string, pos:Vector3, angleDeg:number = 0, parent:Object3D|null = null, id:number = -1)
 	{
 		var entity = this.createPrefab(name);
-		return this.addEntity(entity, pos, angle, parent);
+		return this.addEntity(entity, pos, angleDeg, parent);
 	}
 
 	remove(entity:Entity, isDestroy = false)

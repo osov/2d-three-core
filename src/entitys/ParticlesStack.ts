@@ -86,9 +86,9 @@ export class ParticlesStack extends Entity{
 			this.isChanged = true;
 	}
 
-	setIndexRotation(index:number, angle:number, apply = false)
+	setIndexRotation(index:number, angleRad:number, apply = false)
 	{
-		this.geometry.attributes.rotation.setX(index, angle);
+		this.geometry.attributes.rotation.setX(index, angleRad);
 		if (apply)
 			this.geometry.attributes.rotation.needsUpdate = true;
 		else

@@ -47,9 +47,15 @@ export class ParticleItem extends Entity{
 		this.stack.setIndexPosition(this.idParticle, val ? this.position : deepPosition);
 	}
 
-	setRotation(angle:number)
+	setRotationDeg(angle:number)
 	{
-		super.setRotation(angle);
+		super.setRotationDeg(angle);
+		this.stack.setIndexRotation(this.idParticle, angle * Math.PI / 180);
+	}
+
+	setRotationRad(angle:number)
+	{
+		super.setRotationRad(angle);
 		this.stack.setIndexRotation(this.idParticle, angle);
 	}
 

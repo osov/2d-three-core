@@ -18,8 +18,8 @@ export class EventSystem extends BaseSystem{
 		document.addEventListener("touchmove",  this.onTouchMove.bind(this), false);
 		document.addEventListener('mousedown', this.onMouseDown.bind(this), false);
 		document.addEventListener('mouseup', this.onMouseUp.bind(this), false);
-		document.addEventListener("touchstart", this.onTouchStart.bind(this), false);
-		document.addEventListener("touchend", this.onTouchEnd.bind(this), false);
+		document.addEventListener('touchstart', this.onTouchStart.bind(this), false);
+		document.addEventListener('touchend', this.onTouchEnd.bind(this), false);
 		window.addEventListener('resize', this.onResize.bind(this), false);
 	}
 

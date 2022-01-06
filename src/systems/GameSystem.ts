@@ -3,6 +3,7 @@ import {RenderSystem, InitParams} from './RenderSystem';
 import {CameraHelper} from '../helpers/CameraHelper';
 import {WrapHelper, WrapInfo} from '../helpers/WrapHelper';
 import {SelectorHelper} from '../helpers/SelectorHelper';
+import {MouseInputHelper} from '../helpers/MouseInputHelper';
 import {LooperHelper, EventUpdate} from '../helpers/LooperHelper';
 import {Entity} from '../entitys/Entity';
 import * as gUtils from '../core/gameUtils';
@@ -22,6 +23,7 @@ export class GameSystem extends RenderSystem{
 	public cameraHelper:CameraHelper;
 	public wrapHelper:WrapHelper;
 	public selectorHelper:SelectorHelper;
+	public mouseHelper:MouseInputHelper;
 	private looperHelper:LooperHelper;
 
 	constructor(params:InitParams = {isPerspective:false})
@@ -37,6 +39,7 @@ export class GameSystem extends RenderSystem{
 		this.wrapHelper = new WrapHelper(this);
 		this.selectorHelper = new SelectorHelper(this);
 		this.looperHelper = new LooperHelper(this);
+		this.mouseHelper = new MouseInputHelper(this);
 
 		this.cameraHelper.init();
 		this.wrapHelper.init();

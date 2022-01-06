@@ -100,14 +100,14 @@ export class RenderSystem extends EventSystem{
 		return this.resourceSystem.loadTextures(path, names);
 	}
 
-	addEntity(entity:Entity, pos:Vector3 = new Vector3(), angle:number = 0, parent:Object3D|null = null, id:number = -1)
+	addEntity(entity:Entity, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1)
 	{
-		return this.entitysSystem.addEntity(entity, pos, angle, parent, id);
+		return this.entitysSystem.addEntity(entity, pos, angleDeg, parent, id);
 	}
 
-	addEntityByName(name:string, pos:Vector3 = new Vector3(), angle:number = 0, parent:Object3D|null = null, id:number = -1)
+	addEntityByName(name:string, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1)
 	{
-		return this.entitysSystem.addEntityByName(name, pos, angle, parent, id);
+		return this.entitysSystem.addEntityByName(name, pos, angleDeg, parent, id);
 	}
 
 	remove(entity:Entity, isDestroy = false)
