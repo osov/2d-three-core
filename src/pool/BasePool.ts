@@ -7,7 +7,8 @@ TODO
 теоретичеки при put можно удалять от родителя, чтобы он не был в сцене привязан
 если будет много объектов, то смысл есть, иначе можно и так оставить.
 */
-export class BasePool extends  Entity{
+export class BasePool extends Entity{
+
 	private pool:ECS.BasePool<Entity>;
 
 	constructor(src:Entity, startCount = 1)

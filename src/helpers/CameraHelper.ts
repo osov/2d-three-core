@@ -2,6 +2,12 @@ import {Vector2, Vector3} from 'three';
 import {BaseHelper} from './BaseHelper';
 import {GameSystem} from '../systems/GameSystem';
 
+/*
+	рывок камеры при прохождении границы будет если во-первых при deltaStep не учтен deltaTime
+	а во-вторых если кружится возле границы взад и вперед то при маленькой cameraSpeed она будет плавно двигаться назад
+	соответственно рывок, а значит нужно увеличить ее скорость.
+*/
+
 export class CameraHelper extends BaseHelper{
 
 	private readonly lookingAt:Vector2 = new Vector2();
@@ -21,6 +27,8 @@ export class CameraHelper extends BaseHelper{
 
 	doCam(cameraTarget:Vector2|Vector3, deltaTime:number, deltaStep:Vector2|Vector3)
 	{
+		deltaStep.multiplyScalar(deltaTime); // если вдруг шаг движения не нормализован, умножив на дельту
+
 		var dir = new Vector2(cameraTarget.x, cameraTarget.y).sub(this.lookingAt);
 		var dst = new Vector2();
 		const worldWidth = this.gm.settings.worldWidth;

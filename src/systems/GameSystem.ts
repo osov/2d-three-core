@@ -25,6 +25,8 @@ export class GameSystem extends RenderSystem{
 	public selectorHelper:SelectorHelper;
 	public mouseHelper:MouseInputHelper;
 	private looperHelper:LooperHelper;
+	private idLocalEntity:number = -1;
+	private wrapInfo:WrapInfo;
 
 	constructor(params:InitParams = {isPerspective:false})
 	{
@@ -124,14 +126,45 @@ export class GameSystem extends RenderSystem{
 	// Очередь обработки: network, time system, pool, wrap, render
 	update(deltaTime:number, now:number)
 	{
-		this.dispatchEvent({type:"onBeforeRender", 'deltaTime': deltaTime, 'now':now});
+		this.dispatchEvent({type:'onBeforeRender', deltaTime, now});
 		this.entitysSystem.update(deltaTime);
 
+		var pos = new Vector3();
+
+		// делаем заранее рассчет wrap_info, иначе если юзер объект будет ниже по списку сущностей,
+		// то при переходе границы будет мерцание
+		var localEntity = this.entitysSystem.entitys[this.idLocalEntity];
+		if (localEntity)
+		{
+			localEntity.doUpdate(deltaTime);
+			this.dispatchEvent({type:'onLocalUserUpdate', entity:localEntity, deltaTime});
+		}
+
 		if (this.settings.worldWrap)
-			this.wrapHelper.processWrapEntitys(deltaTime);
+			this.wrapInfo = this.getWrapInfo();
+
+		for (var id in this.entitysSystem.entitys)
+		{
+			if (Number(id) == this.idLocalEntity)
+				continue;
+			var entity = this.entitysSystem.entitys[id];
+			entity.doUpdate(deltaTime);
+
+			if (this.settings.worldWrap)
+			{
+				pos.copy(entity.getPosition());
+				this.getWrapPos(this.wrapInfo, pos);
+				//entity.setPositionXY(pos.x, pos.y);
+			}
+		}
 
 		this.renderer.render(this.scene, this.camera);
 
-		this.dispatchEvent({type:"onAfterRender", 'deltaTime': deltaTime, 'now':now});
+		this.dispatchEvent({type:'onAfterRender', deltaTime, now});
+	}
+
+	setIdLocalEntity(id:number)
+	{
+		this.idLocalEntity = id;
 	}
 }

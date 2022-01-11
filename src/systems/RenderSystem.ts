@@ -115,6 +115,11 @@ export class RenderSystem extends EventSystem{
 		return this.entitysSystem.remove(entity, isDestroy);
 	}
 
+	removeById(id:number, isDestroy = false)
+	{
+		return this.entitysSystem.removeById(id, isDestroy);
+	}
+
 	clearScene(fullClear = true)
 	{
 		return this.entitysSystem.clearScene(fullClear);

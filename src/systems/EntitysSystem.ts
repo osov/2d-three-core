@@ -11,7 +11,6 @@ export class EntitysSystem extends BaseSystem{
 
 	public entitys:{[key: number]: Entity} = {};
 	public dynamicEntitys:{[key: number]: Entity} = {};
-	public idLocalEntity:number = -1;
 
 	private lastId:number = startLocalId;
 	private renderSystem:RenderSystem;
@@ -66,20 +65,24 @@ export class EntitysSystem extends BaseSystem{
 		if (id == -1)
 			id = this.lastId++;
 		if (this.entitys[id])
+		{
 			console.warn("Сущность с таким ид существует", id, this.entitys[id]);
+			this.remove(this.entitys[id]);
+		}
 		entity.idEntity = id;
 		this.entitys[id] = entity;
 		entity.addToParent(parent === null ? this.renderSystem.scene : parent);
 		entity.setPosition(pos);
 		entity.setRotationDeg(angleDeg);
 		this.renderSystem.dispatchEvent({type:'onAddedEntity', entity:entity});
+		//console.log('addEntity',entity.prefabName, id);
 		return entity;
 	}
 
 	addEntityByName(name:string, pos:Vector3, angleDeg:number = 0, parent:Object3D|null = null, id:number = -1)
 	{
 		var entity = this.createPrefab(name);
-		return this.addEntity(entity, pos, angleDeg, parent);
+		return this.addEntity(entity, pos, angleDeg, parent, id);
 	}
 
 	remove(entity:Entity, isDestroy = false)
@@ -93,7 +96,18 @@ export class EntitysSystem extends BaseSystem{
 				entity.parent.remove(entity);
 		}
 		else
+		{
+			entity.destroy();
 			this.poolsManager.putPoolItem(entity);
+		}
+	}
+
+	removeById(id:number, isDestroy = false)
+	{
+		var entity = this.entitys[id];
+		if (!entity)
+			return console.warn("Сущность для удаления не найдена:",id);
+		return this.remove(entity, isDestroy);
 	}
 
 	getEntityById(id:number)
@@ -128,11 +142,6 @@ export class EntitysSystem extends BaseSystem{
 		this.dynamicEntitys = {};
 		this.lastId = startLocalId;
 		this.poolsManager.clear();
-	}
-
-	setIdLocalEntity(id:number)
-	{
-		this.idLocalEntity = id;
 	}
 
 	update(deltaTime:number)

@@ -9,7 +9,7 @@ interface InputEvent{
 
 export class MouseInputHelper extends BaseHelper{
 
-	public mouseInterval:number = 200;
+	public mouseInterval:number = 50;
 	public mouseAngle:number = -1;
 	private mousePos:Vector2 = new Vector2();
 	private events:InputEvent[] = [];

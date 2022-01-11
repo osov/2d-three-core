@@ -33,7 +33,6 @@ export interface WrapInfo {
 
 export class WrapHelper extends BaseHelper{
 
-
 	constructor(gm:GameSystem)
 	{
 		super(gm);
@@ -155,7 +154,7 @@ export class WrapHelper extends BaseHelper{
 	processWrapEntitys(deltaTime:number)
 	{
 		var em = this.gm.entitysSystem;
-		var idLocal = em.idLocalEntity;
+		var idLocal = 0;
 		if (idLocal > -1)
 		{
 			var le = em.entitys[idLocal];
@@ -174,5 +173,6 @@ export class WrapHelper extends BaseHelper{
 			e.setPositionXY(pos.x, pos.y);
 		}
 	}
+
 
 }

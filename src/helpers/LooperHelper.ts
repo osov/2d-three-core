@@ -63,8 +63,8 @@ export class LooperHelper extends BaseHelper{
 
 	mainLoopTimeout()
 	{
-		console.log("Timeout");
-		this.dispatchEvent({'type':'updateTimeout'});
+		//console.log("Timeout");
+		this.dispatchEvent({type:'updateTimeout'});
 		this.idTimer = setTimeout(this.mainLoopTimeout.bind(this), 100) as any as number;
 	}
 
@@ -78,7 +78,7 @@ export class LooperHelper extends BaseHelper{
 
 	update(deltaTime:number, now:number)
 	{
-		this.dispatchEvent({'type':'update', 'deltaTime':deltaTime, 'now':now});
+		this.dispatchEvent({type:'update', deltaTime, now});
 	}
 
 
