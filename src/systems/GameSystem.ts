@@ -55,6 +55,7 @@ export class GameSystem extends RenderSystem{
 	start()
 	{
 		this.looperHelper.addEventListener('update', this.updateEvent.bind(this) );
+		this.looperHelper.addEventListener('updateTimeout', this.updateEvent.bind(this) ); // когда нету фокуса, но мы хотим крутить события
 	}
 
 	// ----------------------------------------------------------------------------------------------------------
@@ -131,8 +132,8 @@ export class GameSystem extends RenderSystem{
 
 		var pos = new Vector3();
 
-		// делаем заранее рассчет wrap_info, иначе если юзер объект будет ниже по списку сущностей,
-		// то при переходе границы будет мерцание
+		// делаем заранее рассчет позиции локального, иначе если юзер объект будет ниже по списку сущностей,
+		// то при переходе границы будет мерцание, т.к. до него переместится объект раньше/позже
 		var localEntity = this.entitysSystem.entitys[this.idLocalEntity];
 		if (localEntity)
 		{
@@ -154,11 +155,12 @@ export class GameSystem extends RenderSystem{
 			{
 				pos.copy(entity.getPosition());
 				this.getWrapPos(this.wrapInfo, pos);
-				//entity.setPositionXY(pos.x, pos.y);
+				entity.setPositionXY(pos.x, pos.y);
 			}
 		}
 
-		this.renderer.render(this.scene, this.camera);
+		if (this.looperHelper.isVisible())
+			this.renderer.render(this.scene, this.camera);
 
 		this.dispatchEvent({type:'onAfterRender', deltaTime, now});
 	}

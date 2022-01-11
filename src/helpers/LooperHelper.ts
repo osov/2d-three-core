@@ -13,6 +13,7 @@ export class LooperHelper extends BaseHelper{
 	private rafName:string;
 	private idTimer: number;
 	private lastUpdate:number = 0;
+	private lastUpdateTimeout:number = 0;
 
 	constructor(gm:GameSystem)
 	{
@@ -25,7 +26,7 @@ export class LooperHelper extends BaseHelper{
 		requestAnimationFrame(this.mainLoop.bind(this));
 	}
 
-	initRafDetector()
+	private initRafDetector()
 	{
 		var stateKey = '',
 		eventKey = '',
@@ -47,28 +48,33 @@ export class LooperHelper extends BaseHelper{
 		this.rafName = stateKey;
 	}
 
-	isRaf()
+	isVisible()
 	{
 		return (document.visibilityState === 'visible');
 	}
 
-	changeRaf()
+	private changeRaf()
 	{
-		const val = this.isRaf();
+		const val = this.isVisible();
 		if (!val)
 			this.mainLoopTimeout();
 		else
 			clearTimeout(this.idTimer);
 	}
 
-	mainLoopTimeout()
+	private mainLoopTimeout()
 	{
-		//console.log("Timeout");
-		this.dispatchEvent({type:'updateTimeout'});
+		const now = Date.now();
+		var deltaTime = now - this.lastUpdateTimeout;
+		if (this.lastUpdateTimeout === 0)
+			deltaTime = 16;
+		this.lastUpdateTimeout = now;
+		//console.log("Timeout", now, deltaTime);
+		this.dispatchEvent({type:'updateTimeout', deltaTime, now:this.lastUpdate});
 		this.idTimer = setTimeout(this.mainLoopTimeout.bind(this), 100) as any as number;
 	}
 
-	mainLoop(now:number)
+	private mainLoop(now:number)
 	{
 		const deltaTime = now - this.lastUpdate;
 		this.lastUpdate = now;
@@ -76,7 +82,7 @@ export class LooperHelper extends BaseHelper{
 		requestAnimationFrame(this.mainLoop.bind(this));
 	}
 
-	update(deltaTime:number, now:number)
+	private update(deltaTime:number, now:number)
 	{
 		this.dispatchEvent({type:'update', deltaTime, now});
 	}
