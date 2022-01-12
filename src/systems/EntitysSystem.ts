@@ -69,11 +69,13 @@ export class EntitysSystem extends BaseSystem{
 			console.warn("Сущность с таким ид существует", id, this.entitys[id]);
 			this.remove(this.entitys[id]);
 		}
+		entity.onAdd(this.renderSystem.params);
 		entity.idEntity = id;
 		this.entitys[id] = entity;
 		entity.addToParent(parent === null ? this.renderSystem.scene : parent);
 		entity.setPosition(pos);
 		entity.setRotationDeg(angleDeg);
+		entity.onAdded();
 		this.renderSystem.dispatchEvent({type:'onAddedEntity', entity:entity});
 		//console.log('addEntity',entity.prefabName, id);
 		return entity;
@@ -91,13 +93,14 @@ export class EntitysSystem extends BaseSystem{
 		delete this.entitys[entity.idEntity];
 		if (isDestroy)
 		{
+			entity.onRemove();
 			entity.destroy();
 			if (entity.parent !== null)
 				entity.parent.remove(entity);
 		}
 		else
 		{
-			entity.destroy();
+			entity.onRemove();
 			this.poolsManager.putPoolItem(entity);
 		}
 	}
@@ -113,7 +116,7 @@ export class EntitysSystem extends BaseSystem{
 	getEntityById(id:number)
 	{
 		if (this.entitys[id] === undefined)
-			return false;
+			return;
 		else
 			return this.entitys[id];
 	}

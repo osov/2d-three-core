@@ -71,6 +71,7 @@ export class ParticlesStack extends Entity{
 		geometry.setAttribute("rotation", new Float32BufferAttribute(rotations, 1));
 		this.geometry = geometry;
 		this.material = material;
+		this.frustumCulled = false;
 		Points.prototype.updateMorphTargets.apply(this);
 	}
 

@@ -31,8 +31,8 @@ export class CameraHelper extends BaseHelper{
 
 		var dir = new Vector2(cameraTarget.x, cameraTarget.y).sub(this.lookingAt);
 		var dst = new Vector2();
-		const worldWidth = this.gm.settings.worldWidth;
-		const worldHeight = this.gm.settings.worldHeight;
+		const worldWidth = this.gm.settings.worldSize.x;
+		const worldHeight = this.gm.settings.worldSize.y;
 		// ось Х
 		if (dir.x > worldWidth * 0.5)
 		{

@@ -1,10 +1,21 @@
 {
-    "compilerOptions": {
-    	"target": "es2020",
-    	"esModuleInterop": true,
-        "moduleResolution": "node",
-        "strictPropertyInitialization": false,
-        "strict": true
-    },
-    "include": ["**/*.ts"]
+	"compilerOptions": {
+		"target": "es2020",
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"strictPropertyInitialization": false,
+		"strict": true,
+		"baseUrl": ".",
+/*
+	tsconfig-paths чтобы мог считать одинаковую зависимость three, важно указать,
+	а также в package.json правильно запускать, либо в этой папке: ts-node -r tsconfig-paths/register src/server/server.ts
+	проблема возникает когда импортируется three например в модулях, у каждого своя зависимость и нода думает что это разные
+	проблема возникает когда провожу проверку например instanceof хоть и тип одинаков но т.к. одинаковая либо но у каждого своя
+	происходит проблема при которой это считается неправильно.
+*/
+		"paths": {
+			"three":["../node_modules/ecs-threejs/node_modules/three"]
+		}
+	},
+	"include": ["**/*.ts"]
 }

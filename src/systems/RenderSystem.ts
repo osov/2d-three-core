@@ -12,7 +12,9 @@ import {Entity} from '../entitys/Entity';
 
 
 export interface InitParams{
-	isPerspective?:boolean
+	isPerspective?:boolean;
+	worldWrap:boolean;
+	worldSize:Vector2;
 }
 
 export class RenderSystem extends EventSystem{
@@ -22,9 +24,9 @@ export class RenderSystem extends EventSystem{
 	public readonly renderer:WebGLRenderer;
 	public readonly resourceSystem:ResourceSystem;
 	public readonly entitysSystem:EntitysSystem;
-	private readonly params:InitParams;
+	public readonly params:InitParams;
 
-	constructor(params:InitParams = {isPerspective:false})
+	constructor(params:InitParams = {isPerspective:false, worldWrap:false, worldSize:new Vector2(1,1)})
 	{
 		super();
 		this.params = params;

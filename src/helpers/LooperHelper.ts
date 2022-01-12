@@ -10,6 +10,7 @@ export interface EventUpdate extends t.Event{
 
 export class LooperHelper extends BaseHelper{
 
+	public maxDeltaTime = 100;
 	private rafName:string;
 	private idTimer: number;
 	private lastUpdate:number = 0;
@@ -68,6 +69,8 @@ export class LooperHelper extends BaseHelper{
 		var deltaTime = now - this.lastUpdateTimeout;
 		if (this.lastUpdateTimeout === 0)
 			deltaTime = 16;
+		if (deltaTime > this.maxDeltaTime)
+			deltaTime = this.maxDeltaTime;
 		this.lastUpdateTimeout = now;
 		//console.log("Timeout", now, deltaTime);
 		this.dispatchEvent({type:'updateTimeout', deltaTime, now:this.lastUpdate});
@@ -84,6 +87,8 @@ export class LooperHelper extends BaseHelper{
 
 	private update(deltaTime:number, now:number)
 	{
+		if (deltaTime > this.maxDeltaTime)
+			deltaTime = this.maxDeltaTime;
 		this.dispatchEvent({type:'update', deltaTime, now});
 	}
 

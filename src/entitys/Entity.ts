@@ -14,9 +14,12 @@ export class Entity extends BaseEntity{
 	{
 		for (var i = 0; i < this.children.length; ++i)
 		{
-			if (!(this.children[i] instanceof Entity))
+			var child = this.children[i];
+			if (child.parent === this)
 				continue;
-			var childSrc = this.children[i] as Entity;
+			if (!(child instanceof Entity))
+				continue;
+			var childSrc = child as Entity;
 			var copy = childSrc.makeInstance();
 			dst.add(copy);
 			copy.copy(childSrc, false);

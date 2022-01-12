@@ -9,9 +9,8 @@ import {Entity} from '../entitys/Entity';
 import * as gUtils from '../core/gameUtils';
 
 interface WorldSettings{
-	worldWidth:number;
-	worldHeight:number;
 	worldWrap:boolean;
+	worldSize:Vector2;
 	viewDistance:number;
 	cameraSpeed:number;
 	fontUrl:string;
@@ -28,7 +27,7 @@ export class GameSystem extends RenderSystem{
 	private idLocalEntity:number = -1;
 	private wrapInfo:WrapInfo;
 
-	constructor(params:InitParams = {isPerspective:false})
+	constructor(params:InitParams = {isPerspective:false, worldWrap:false, worldSize:new Vector2(1,1)})
 	{
 		super(params);
 	}
@@ -55,7 +54,7 @@ export class GameSystem extends RenderSystem{
 	start()
 	{
 		this.looperHelper.addEventListener('update', this.updateEvent.bind(this) );
-		this.looperHelper.addEventListener('updateTimeout', this.updateEvent.bind(this) ); // когда нету фокуса, но мы хотим крутить события
+		this.looperHelper.addEventListener('updateTimeout', this.updateEventTimeout.bind(this) ); // когда нету фокуса, но мы хотим крутить события
 	}
 
 	// ----------------------------------------------------------------------------------------------------------
@@ -159,14 +158,27 @@ export class GameSystem extends RenderSystem{
 			}
 		}
 
-		if (this.looperHelper.isVisible())
+		if (this.isVisible())
 			this.renderer.render(this.scene, this.camera);
 
 		this.dispatchEvent({type:'onAfterRender', deltaTime, now});
 	}
 
+	// в первую очередь чтобы крутануть сетевые события.
+	updateEventTimeout(event:Event)
+	{
+		var e = event as EventUpdate;
+		this.dispatchEvent({type:'onBeforeRender', deltaTime:e.deltaTime, now:e.now});
+		this.dispatchEvent({type:'onAfterRender', deltaTime:e.deltaTime, now:e.now});
+	}
+
 	setIdLocalEntity(id:number)
 	{
 		this.idLocalEntity = id;
+	}
+
+	isVisible()
+	{
+		return this.looperHelper.isVisible();
 	}
 }
