@@ -14,19 +14,33 @@ export class ParticleItem extends Entity{
 		this.stack = stack;
 	}
 
+	// частицу незачем добавлять на сцену, т.к. рассчеты идут все равно пулом 
 	addToParent(parent:Object3D)
 	{
+	}
+
+	// удалять соответственно тоже не от куда
+	removeFromParent()
+	{
+		return this;
+	}
+
+	onAdded()
+	{
+		super.onAdded();
 		this.idParticle = this.stack.getFreeIndex();
 		if (this.idParticle == -1)
 			console.warn("Частица не выдана:", this);
 	}
 
-	removeFromParent()
+	onRemove()
 	{
+		super.onRemove();
+		this.setVisible(false);
 		this.stack.freeIndex(this.idParticle);
 		this.idParticle = -1;
-		return this;
 	}
+	
 
 	setPosition(pos:Vector2|Vector3)
 	{

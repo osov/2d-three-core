@@ -91,16 +91,14 @@ export class EntitysSystem extends BaseSystem{
 	{
 		this.renderSystem.dispatchEvent({type:'onBeforeRemoveEntity', entity:entity});
 		delete this.entitys[entity.idEntity];
+		entity.onRemove();
 		if (isDestroy)
 		{
-			entity.onRemove();
+			entity.removeFromParent();
 			entity.destroy();
-			if (entity.parent !== null)
-				entity.parent.remove(entity);
 		}
 		else
 		{
-			entity.onRemove();
 			this.poolsManager.putPoolItem(entity);
 		}
 	}

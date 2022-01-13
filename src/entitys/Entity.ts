@@ -1,4 +1,3 @@
-import {Vector2, Vector3} from 'three';
 import {BaseEntity} from 'ecs-threejs';
 
 export class Entity extends BaseEntity{
