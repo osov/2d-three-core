@@ -2,6 +2,13 @@ import { Vector2, Vector3, Object3D, PointsMaterial, BufferGeometry,Float32Buffe
 import {deepPosition} from '../core/gameUtils';
 import {Entity} from './Entity';
 
+/*
+	todo можно оптимизировать если проверять реально ли изменилась позиция/вращения
+	+ отдельно проверка на изменение позиции и вращения
+
+	очень интересный баг, если передать в установку позиции вместо индекса undefined то не будет ошибки, но будет нагрузка на CPU
+*/
+
 export class ParticlesStack extends Entity{
 
 	public geometry:BufferGeometry;
@@ -78,8 +85,10 @@ export class ParticlesStack extends Entity{
 
 	setIndexPosition(index:number, pos:Vector2|Vector3, apply = false)
 	{
-		var z = pos instanceof Vector3 ? pos.z : this.geometry.attributes.position.getZ(index);
-		var vec = new Vector3(pos.x,pos.y,z).sub(this.position);
+		if (!(index >= 0))
+			return;
+		var z = ('isVector3' in pos) ? pos.z : this.geometry.attributes.position.getZ(index);
+		var vec = new Vector3(pos.x,pos.y,z);
 		this.geometry.attributes.position.setXYZ(index, vec.x, vec.y, vec.z);
 		if (apply)
 			this.geometry.attributes.position.needsUpdate = true;
@@ -89,6 +98,8 @@ export class ParticlesStack extends Entity{
 
 	setIndexRotation(index:number, angleRad:number, apply = false)
 	{
+		if (!(index >= 0))
+			return;
 		this.geometry.attributes.rotation.setX(index, angleRad);
 		if (apply)
 			this.geometry.attributes.rotation.needsUpdate = true;

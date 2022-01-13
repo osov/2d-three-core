@@ -1,10 +1,4 @@
-import {
-	Scene, Camera, WebGLRenderer, Group,
-	PerspectiveCamera, OrthographicCamera,
-	Sprite,SpriteMaterial,PlaneBufferGeometry,MeshBasicMaterial,Mesh,Object3D,
-	TextureLoader, Texture, CanvasTexture, RepeatWrapping,
-	Vector2, Vector3} from 'three';
-
+import {Scene, Camera, WebGLRenderer, PerspectiveCamera, OrthographicCamera, Object3D,Vector2, Vector3} from 'three';
 import {EventSystem} from './EventSystem';
 import {ResourceSystem} from './ResourceSystem';
 import {EntitysSystem} from './EntitysSystem';
@@ -15,6 +9,7 @@ export interface InitParams{
 	isPerspective?:boolean;
 	worldWrap:boolean;
 	worldSize:Vector2;
+	viewDistance:number;
 }
 
 export class RenderSystem extends EventSystem{
@@ -26,7 +21,7 @@ export class RenderSystem extends EventSystem{
 	public readonly entitysSystem:EntitysSystem;
 	public readonly params:InitParams;
 
-	constructor(params:InitParams = {isPerspective:false, worldWrap:false, worldSize:new Vector2(1,1)})
+	constructor(params:InitParams = {isPerspective:false, worldWrap:false, worldSize:new Vector2(1,1), viewDistance:1})
 	{
 		super();
 		this.params = params;
@@ -89,7 +84,6 @@ export class RenderSystem extends EventSystem{
 			(this.camera as OrthographicCamera).updateProjectionMatrix();
 		}
 		this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-		//this.render();
 	}
 
 
@@ -102,17 +96,22 @@ export class RenderSystem extends EventSystem{
 		return this.resourceSystem.loadTextures(path, names);
 	}
 
-	addEntity(entity:Entity, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1)
+	addEntity(entity:Entity, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1, isDynamic:boolean = false)
 	{
-		return this.entitysSystem.addEntity(entity, pos, angleDeg, parent, id);
+		return this.entitysSystem.addEntity(entity, pos, angleDeg, parent, id, isDynamic);
 	}
 
-	addEntityByName(name:string, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1)
+	addEntityByName(name:string, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1, isDynamic:boolean = false)
 	{
-		return this.entitysSystem.addEntityByName(name, pos, angleDeg, parent, id);
+		return this.entitysSystem.addEntityByName(name, pos, angleDeg, parent, id, isDynamic);
 	}
 
-	remove(entity:Entity, isDestroy = false)
+	addToWrappedList(entity:Entity, isDynamic:boolean = true)
+	{
+		return this.entitysSystem.addToWrappedList(entity, isDynamic);
+	}
+
+	removeEntity(entity:Entity, isDestroy = false)
 	{
 		return this.entitysSystem.remove(entity, isDestroy);
 	}

@@ -6,7 +6,7 @@ import {deepPosition} from '../core/gameUtils';
 export class ParticleItem extends Entity{
 
 	private stack:ParticlesStack;
-	private idParticle:number;
+	private idParticle:number = -1;
 
 	constructor(stack:ParticlesStack)
 	{
@@ -30,7 +30,12 @@ export class ParticleItem extends Entity{
 		super.onAdded();
 		this.idParticle = this.stack.getFreeIndex();
 		if (this.idParticle == -1)
-			console.warn("Частица не выдана:", this);
+			return console.warn("Частица не выдана:", this);
+		// т.к. сначала задаем позицию, а лишь потом добавляем сущность в обработку EntitySystem -> addEntity 
+		// то выходит что при вызове еще не будет задан idParticle, а значит инфа не задастся и поэтому после добавления делаем эти действия.
+		this.setPosition(this.position);
+		this.setRotationDeg(this.getRotationDeg());
+		this.setVisible(this.visible);
 	}
 
 	onRemove()

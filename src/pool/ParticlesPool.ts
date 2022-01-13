@@ -16,4 +16,8 @@ export class ParticlesPool extends BasePool{
 		super.setRenderOrder(index);
 		this.stack.setRenderOrder(index);
 	}
+
+	setPositionZ(z: number): void {
+		this.stack.position.z = z;
+	}
 }

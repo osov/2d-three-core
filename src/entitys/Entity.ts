@@ -32,9 +32,4 @@ export class Entity extends BaseEntity{
 		return copy;
 	}
 
-	destroy()
-	{
-
-	}
-
 }

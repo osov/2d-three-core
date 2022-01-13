@@ -26,8 +26,9 @@ export class GameSystem extends RenderSystem{
 	private looperHelper:LooperHelper;
 	private idLocalEntity:number = -1;
 	private wrapInfo:WrapInfo;
+	private lastUserPos:Vector2 = new Vector2();
 
-	constructor(params:InitParams = {isPerspective:false, worldWrap:false, worldSize:new Vector2(1,1)})
+	constructor(params:InitParams = {isPerspective:false, worldWrap:false, worldSize:new Vector2(1,1),viewDistance:1})
 	{
 		super(params);
 	}
@@ -133,7 +134,7 @@ export class GameSystem extends RenderSystem{
 
 		// делаем заранее рассчет позиции локального, иначе если юзер объект будет ниже по списку сущностей,
 		// то при переходе границы будет мерцание, т.к. до него переместится объект раньше/позже
-		var localEntity = this.entitysSystem.entitys[this.idLocalEntity];
+		var localEntity = this.entitysSystem.dynamicEntitys[this.idLocalEntity];
 		if (localEntity)
 		{
 			localEntity.doUpdate(deltaTime);
@@ -143,19 +144,19 @@ export class GameSystem extends RenderSystem{
 		if (this.settings.worldWrap)
 			this.wrapInfo = this.getWrapInfo();
 
-		for (var id in this.entitysSystem.entitys)
+		for (var id in this.entitysSystem.wrappedEntitys)
 		{
 			if (Number(id) == this.idLocalEntity)
 				continue;
-			var entity = this.entitysSystem.entitys[id];
-			entity.doUpdate(deltaTime);
+			 var entity = this.entitysSystem.wrappedEntitys[id];
+			 entity.doUpdate(deltaTime);
 
-			if (this.settings.worldWrap)
-			{
-				pos.copy(entity.getPosition());
+			 if (this.settings.worldWrap)
+			 {
+			 	pos.copy(entity.getPosition());
 				this.getWrapPos(this.wrapInfo, pos);
-				entity.setPositionXY(pos.x, pos.y);
-			}
+			 	entity.setPositionXY(pos.x, pos.y);
+			 }
 		}
 
 		if (this.isVisible())

@@ -11,7 +11,7 @@ export class EntitysSystem extends BaseSystem{
 
 	public entitys:{[key: number]: Entity} = {};
 	public dynamicEntitys:{[key: number]: Entity} = {};
-
+	public wrappedEntitys:{[key: number]: Entity} = {};
 	private lastId:number = startLocalId;
 	private renderSystem:RenderSystem;
 	private poolsManager:PoolsManager;
@@ -60,7 +60,7 @@ export class EntitysSystem extends BaseSystem{
 		return entity;
 	}
 
-	addEntity(entity:Entity, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1)
+	addEntity(entity:Entity, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1, isDynamic:boolean = false)
 	{
 		if (id == -1)
 			id = this.lastId++;
@@ -72,25 +72,49 @@ export class EntitysSystem extends BaseSystem{
 		entity.onAdd(this.renderSystem.params);
 		entity.idEntity = id;
 		this.entitys[id] = entity;
+		if (isDynamic)
+			this.dynamicEntitys[id] = entity;
 		entity.addToParent(parent === null ? this.renderSystem.scene : parent);
 		entity.setPosition(pos);
 		entity.setRotationDeg(angleDeg);
+		if (isDynamic)
+			this.addToWrappedList(entity);
 		entity.onAdded();
 		this.renderSystem.dispatchEvent({type:'onAddedEntity', entity:entity});
 		//console.log('addEntity',entity.prefabName, id);
 		return entity;
 	}
 
-	addEntityByName(name:string, pos:Vector3, angleDeg:number = 0, parent:Object3D|null = null, id:number = -1)
+	addToWrappedList(entity:Entity, isDynamic:boolean = true)
+	{
+		if (!this.renderSystem.params.worldWrap)
+			return;
+		if (this.wrappedEntitys[entity.idEntity])
+			console.warn("Сущность с таким ид существует в списка wrapped", entity.idEntity);
+		if (!isDynamic)
+		{
+			const cx = this.renderSystem.params.worldSize.x * 0.5 - this.renderSystem.params.viewDistance;
+			const cy = this.renderSystem.params.worldSize.y * 0.5 - this.renderSystem.params.viewDistance;
+			const pos = entity.getPosition();
+			if ((pos.x >= -cx && pos.x <= cx ) &&  (pos.y >= -cy && pos.y <= cy ))
+				return;
+		}
+
+		this.wrappedEntitys[entity.idEntity] = entity;
+	}
+
+	addEntityByName(name:string, pos:Vector3, angleDeg:number = 0, parent:Object3D|null = null, id:number = -1, isDynamic:boolean = false)
 	{
 		var entity = this.createPrefab(name);
-		return this.addEntity(entity, pos, angleDeg, parent, id);
+		return this.addEntity(entity, pos, angleDeg, parent, id, isDynamic);
 	}
 
 	remove(entity:Entity, isDestroy = false)
 	{
 		this.renderSystem.dispatchEvent({type:'onBeforeRemoveEntity', entity:entity});
 		delete this.entitys[entity.idEntity];
+		delete this.dynamicEntitys[entity.idEntity];
+		delete this.wrappedEntitys[entity.idEntity];
 		entity.onRemove();
 		if (isDestroy)
 		{
@@ -141,6 +165,7 @@ export class EntitysSystem extends BaseSystem{
 		}
 		this.entitys = {};
 		this.dynamicEntitys = {};
+		this.wrappedEntitys = {};
 		this.lastId = startLocalId;
 		this.poolsManager.clear();
 	}
