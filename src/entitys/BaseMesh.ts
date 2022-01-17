@@ -1,4 +1,4 @@
-import {Vector2, Vector3, Object3D, Sprite, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Raycaster, Intersection} from 'three';
+import {Object3D,  Mesh, MeshBasicMaterial, PlaneBufferGeometry, Raycaster, Intersection} from 'three';
 import {Entity} from './Entity';
 
 export class BaseMesh extends Entity{

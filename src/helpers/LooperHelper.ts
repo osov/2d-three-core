@@ -11,7 +11,6 @@ export interface EventUpdate extends t.Event{
 export class LooperHelper extends BaseHelper{
 
 	public maxDeltaTime = 100;
-	private rafName:string;
 	private idTimer: number;
 	private lastUpdate:number = 0;
 	private lastUpdateTimeout:number = 0;
@@ -46,7 +45,6 @@ export class LooperHelper extends BaseHelper{
 			}
 		}
 		document.addEventListener(eventKey, this.changeRaf.bind(this));
-		this.rafName = stateKey;
 	}
 
 	isVisible()

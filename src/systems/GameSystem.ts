@@ -26,7 +26,6 @@ export class GameSystem extends RenderSystem{
 	private looperHelper:LooperHelper;
 	private idLocalEntity:number = -1;
 	private wrapInfo:WrapInfo;
-	private lastUserPos:Vector2 = new Vector2();
 
 	constructor(params:InitParams = {isPerspective:false, worldWrap:false, worldSize:new Vector2(1,1),viewDistance:1})
 	{
@@ -124,6 +123,14 @@ export class GameSystem extends RenderSystem{
 		this.update(e.deltaTime, e.now);
 	}
 
+	// в первую очередь чтобы крутануть сетевые события.
+	updateEventTimeout(event:Event)
+	{
+		var e = event as EventUpdate;
+		this.dispatchEvent({type:'onBeforeRender', deltaTime:e.deltaTime, now:e.now});
+		this.dispatchEvent({type:'onAfterRender', deltaTime:e.deltaTime, now:e.now});
+	}
+
 	// Очередь обработки: network, time system, pool, wrap, render
 	update(deltaTime:number, now:number)
 	{
@@ -144,7 +151,7 @@ export class GameSystem extends RenderSystem{
 		if (this.settings.worldWrap)
 			this.wrapInfo = this.getWrapInfo();
 
-		for (var id in this.entitysSystem.wrappedEntitys)
+	 	for (var id in this.entitysSystem.wrappedEntitys)
 		{
 			if (Number(id) == this.idLocalEntity)
 				continue;
@@ -157,20 +164,12 @@ export class GameSystem extends RenderSystem{
 				this.getWrapPos(this.wrapInfo, pos);
 			 	entity.setPositionXY(pos.x, pos.y);
 			 }
-		}
+		} 
 
 		if (this.isVisible())
 			this.renderer.render(this.scene, this.camera);
 
 		this.dispatchEvent({type:'onAfterRender', deltaTime, now});
-	}
-
-	// в первую очередь чтобы крутануть сетевые события.
-	updateEventTimeout(event:Event)
-	{
-		var e = event as EventUpdate;
-		this.dispatchEvent({type:'onBeforeRender', deltaTime:e.deltaTime, now:e.now});
-		this.dispatchEvent({type:'onAfterRender', deltaTime:e.deltaTime, now:e.now});
 	}
 
 	setIdLocalEntity(id:number)

@@ -1,9 +1,5 @@
-import {
-	Mesh,Object3D, MeshBasicMaterial,
-	TextureLoader, Texture, CanvasTexture, RepeatWrapping} from 'three';
+import { MeshBasicMaterial,	TextureLoader, Texture, CanvasTexture, RepeatWrapping} from 'three';
 import {BaseSystem} from './BaseSystem';
-import {GameSystem} from './GameSystem';
-import {Entity} from '../entitys/Entity';
 const {preloadFont} = require('troika-three-text');
 
 

@@ -1,4 +1,3 @@
-import { Vector2, Vector3, EventDispatcher} from 'three';
 import {Entity} from '../entitys/Entity';
 import * as ECS from 'ecs-threejs';
 
@@ -7,9 +6,11 @@ TODO
 теоретичеки при put можно удалять от родителя, чтобы он не был в сцене привязан
 если будет много объектов, то смысл есть, иначе можно и так оставить.
 */
+
+// не наследуем от ecs.BasePool потому что в будущем нам нужны свойства типа setRenderOrder, setPosition и т.п.
 export class BasePool extends Entity{
 
-	private pool:ECS.BasePool<Entity>;
+	protected pool:ECS.BasePool<Entity>;
 
 	constructor(src:Entity, startCount = 1)
 	{

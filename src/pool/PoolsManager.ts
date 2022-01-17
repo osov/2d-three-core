@@ -1,4 +1,4 @@
-import { Vector2, Vector3, EventDispatcher, PointsMaterial} from 'three';
+import {PointsMaterial} from 'three';
 import {Entity} from '../entitys/Entity';
 import {ParticlesStack} from '../entitys/ParticlesStack';
 import {ParticleItem} from '../entitys/ParticleItem';
@@ -6,8 +6,9 @@ import {BasePool} from './BasePool';
 import {ObjectsPool} from './ObjectsPool';
 import {ParticlesPool} from './ParticlesPool';
 import {RenderSystem} from '../systems/RenderSystem';
+import { BaseSystem } from 'ecs-threejs';
 
-export class PoolsManager extends EventDispatcher{
+export class PoolsManager extends BaseSystem{
 
 	private rs:RenderSystem;
 	private pools:{[k:string]:BasePool} = {};
@@ -72,15 +73,9 @@ export class PoolsManager extends EventDispatcher{
 		{
 			var ps = this.particlesList[k];
 			ps.destroy();
-			if (ps.parent !== null)
-				ps.parent.remove(ps);
+			ps.removeFromParent();
 		}
 		this.particlesList = {};
-
-		for (var k in this.pools)
-		{
-			this.pools[k].clear();
-		}
 		this.pools = {};
 	}
 

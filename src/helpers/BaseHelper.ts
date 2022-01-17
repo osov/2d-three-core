@@ -1,7 +1,7 @@
-import {EventDispatcher} from 'three';
+import { BaseSystem } from 'ecs-threejs';
 import {GameSystem} from '../systems/GameSystem';
 
-export class BaseHelper extends EventDispatcher{
+export class BaseHelper extends BaseSystem{
 
 	protected gm:GameSystem;
 

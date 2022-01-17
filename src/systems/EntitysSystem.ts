@@ -1,4 +1,4 @@
-import {Vector2, Vector3, Object3D, MeshBasicMaterial, PointsMaterial} from 'three';
+import {Vector3, Object3D, PointsMaterial} from 'three';
 import {BaseSystem} from './BaseSystem';
 import {RenderSystem} from './RenderSystem';
 import {Entity} from '../entitys/Entity';
@@ -91,15 +91,14 @@ export class EntitysSystem extends BaseSystem{
 			return;
 		if (this.wrappedEntitys[entity.idEntity])
 			console.warn("Сущность с таким ид существует в списка wrapped", entity.idEntity);
+		const cx = this.renderSystem.params.worldSize.x * 0.5 - this.renderSystem.params.viewDistance;
+		const cy = this.renderSystem.params.worldSize.y * 0.5 - this.renderSystem.params.viewDistance;
 		if (!isDynamic)
 		{
-			const cx = this.renderSystem.params.worldSize.x * 0.5 - this.renderSystem.params.viewDistance;
-			const cy = this.renderSystem.params.worldSize.y * 0.5 - this.renderSystem.params.viewDistance;
 			const pos = entity.getPosition();
 			if ((pos.x >= -cx && pos.x <= cx ) &&  (pos.y >= -cy && pos.y <= cy ))
 				return;
 		}
-
 		this.wrappedEntitys[entity.idEntity] = entity;
 	}
 
@@ -157,10 +156,9 @@ export class EntitysSystem extends BaseSystem{
 			for (var i = this.renderSystem.scene.children.length - 1; i >= 0; i--)
 			{
 				var m = this.renderSystem.scene.children[i];
+				m.removeFromParent();
 				if (m instanceof Entity)
 					m.destroy();
-				if (m.parent)
-					m.parent.remove(m);
 			}
 		}
 		this.entitys = {};
