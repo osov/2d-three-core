@@ -1,6 +1,5 @@
-import {Vector2, Object3D, Raycaster, Camera, Group} from 'three';
+import {Vector2, Object3D, Raycaster} from 'three';
 import {BaseHelper} from './BaseHelper';
-import {GameSystem} from '../systems/GameSystem';
 import {Entity} from '../entitys/Entity';
 
 export class SelectorHelper extends BaseHelper{
@@ -12,15 +11,10 @@ export class SelectorHelper extends BaseHelper{
 	private raycaster = new Raycaster();
 	private list:Entity[] = [];
 
-	constructor(gm:GameSystem)
-	{
-		super(gm);
-	}
-
 	init()
 	{
-		this.gm.addEventListener("onMove", this.onMove.bind(this));
-		this.gm.addEventListener("onDown", this.onInputDown.bind(this));
+		this.gs.addEventListener("onMove", this.onMove.bind(this));
+		this.gs.addEventListener("onDown", this.onInputDown.bind(this));
 	}
 
 	add(entity:Entity)
@@ -48,10 +42,10 @@ export class SelectorHelper extends BaseHelper{
 	private checkOnIntersect()
 	{
 		var pointer = new Vector2(
-			( this.gm.mousePos.x / this.gm.container.clientWidth ) * 2 - 1,
-			- (this.gm.mousePos.y / this.gm.container.clientHeight ) * 2 + 1
+			( this.gs.mousePos.x / this.gs.container.clientWidth ) * 2 - 1,
+			- (this.gs.mousePos.y / this.gs.container.clientHeight ) * 2 + 1
 		);
-		this.raycaster.setFromCamera( pointer, this.gm.camera );
+		this.raycaster.setFromCamera( pointer, this.gs.camera );
 		const intersects = this.raycaster.intersectObjects( this.list, false );
 		if ( intersects.length > 0 )
 		{
@@ -76,14 +70,14 @@ export class SelectorHelper extends BaseHelper{
 
 	private onEnterItem(mesh:Object3D)
 	{
-		console.log('enter', mesh);
-		this.gm.dispatchEvent({type:"onEnter", mesh: mesh});
+		this.log('enter', mesh);
+		this.gs.dispatchEvent({type:"onEnter", mesh: mesh});
 	}
 
 	private onLeaveItem(mesh:Object3D)
 	{
-		//console.log('leave', mesh);
-		this.gm.dispatchEvent({type:"onLeave", mesh: mesh});
+		//this.log('leave', mesh);
+		this.gs.dispatchEvent({type:"onLeave", mesh: mesh});
 	}
 
 

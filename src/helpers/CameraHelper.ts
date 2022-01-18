@@ -1,6 +1,5 @@
 import {Vector2, Vector3} from 'three';
 import {BaseHelper} from './BaseHelper';
-import {GameSystem} from '../systems/GameSystem';
 
 /*
 	рывок камеры при прохождении границы будет если во-первых при deltaStep не учтен deltaTime
@@ -14,14 +13,9 @@ export class CameraHelper extends BaseHelper{
 	public readonly bgPhase:Vector2 = new Vector2();
 	public readonly bgOffset:Vector2 = new Vector2();
 
-	constructor(gm:GameSystem)
-	{
-		super(gm);
-	}
-
 	private centerCamera(x:number, y:number)
 	{
-		this.gm.camera.position.set(x, y, this.gm.camera.position.z );
+		this.gs.camera.position.set(x, y, this.gs.camera.position.z );
 		this.lookingAt.set(x,y)
 	}
 
@@ -31,8 +25,8 @@ export class CameraHelper extends BaseHelper{
 
 		var dir = new Vector2(cameraTarget.x, cameraTarget.y).sub(this.lookingAt);
 		var dst = new Vector2();
-		const worldWidth = this.gm.settings.worldSize.x;
-		const worldHeight = this.gm.settings.worldSize.y;
+		const worldWidth = this.gs.settings.worldSize.x;
+		const worldHeight = this.gs.settings.worldSize.y;
 		// ось Х
 		if (dir.x > worldWidth * 0.5)
 		{
@@ -45,7 +39,7 @@ export class CameraHelper extends BaseHelper{
 			this.bgPhase.x -=1;
 		}
 		else
-			dst.x = this.lookingAt.x + dir.x * this.gm.settings.cameraSpeed * deltaTime;
+			dst.x = this.lookingAt.x + dir.x * this.gs.settings.cameraSpeed * deltaTime;
 
 		// ось Y
 		if (dir.y > worldHeight * 0.5)
@@ -59,7 +53,7 @@ export class CameraHelper extends BaseHelper{
 			this.bgPhase.y -=1;
 		}
 		else
-			dst.y = this.lookingAt.y + dir.y * this.gm.settings.cameraSpeed * deltaTime;
+			dst.y = this.lookingAt.y + dir.y * this.gs.settings.cameraSpeed * deltaTime;
 
 		/*var bgOffsetX = this.bgPhase.x * worldWidth + this.camera.position.x;
 		var bgOffsetY = this.bgPhase.y * worldHeight + this.camera.position.y;

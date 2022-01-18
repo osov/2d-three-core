@@ -10,10 +10,10 @@ export interface InitParams{
 	worldWrap:boolean;
 	worldSize:Vector2;
 	viewDistance:number;
+	container?:HTMLElement|null;
 }
 
 export class RenderSystem extends EventSystem{
-	public readonly container:HTMLElement;
 	public readonly scene:Scene;
 	public readonly camera:Camera;
 	public readonly renderer:WebGLRenderer;
@@ -23,7 +23,7 @@ export class RenderSystem extends EventSystem{
 
 	constructor(params:InitParams = {isPerspective:false, worldWrap:false, worldSize:new Vector2(1,1), viewDistance:1})
 	{
-		super();
+		super(params.container ? params.container : document.body);
 		this.params = params;
 		const width = window.innerWidth;
 		const height =  window.innerHeight;
@@ -46,7 +46,6 @@ export class RenderSystem extends EventSystem{
 		this.renderer.setSize(width, height);
 		this.renderer.setClearColor( 0xffffff, 1 );
 
-		this.container = document.body;
 		this.container.appendChild(this.renderer.domElement);
 		this.container.oncontextmenu = function(){return false;}
 		this.onResize();
@@ -96,19 +95,19 @@ export class RenderSystem extends EventSystem{
 		return this.resourceSystem.loadTextures(path, names);
 	}
 
-	addEntity(entity:Entity, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1, isDynamic:boolean = false)
+	addEntity(entity:Entity, pos:Vector3 = new Vector3(), angleDeg:number = 0, isDynamic:boolean = false, parent:Object3D|null = null, id:number = -1)
 	{
-		return this.entitysSystem.addEntity(entity, pos, angleDeg, parent, id, isDynamic);
+		return this.entitysSystem.addEntity(entity, pos, angleDeg, isDynamic, parent, id);
 	}
 
-	addEntityByName(name:string, pos:Vector3 = new Vector3(), angleDeg:number = 0, parent:Object3D|null = null, id:number = -1, isDynamic:boolean = false)
+	addEntityByName(name:string, pos:Vector3 = new Vector3(), angleDeg:number = 0, isDynamic:boolean = false, parent:Object3D|null = null, id:number = -1)
 	{
-		return this.entitysSystem.addEntityByName(name, pos, angleDeg, parent, id, isDynamic);
+		return this.entitysSystem.addEntityByName(name, pos, angleDeg, isDynamic, parent, id);
 	}
 
-	addToWrappedList(entity:Entity, isDynamic:boolean = true)
+	addToNotWrapList(entity:Entity)
 	{
-		return this.entitysSystem.addToWrappedList(entity, isDynamic);
+		this.entitysSystem.notWrappedIds.add(entity.idEntity);
 	}
 
 	removeEntity(entity:Entity, isDestroy = false)
@@ -129,6 +128,11 @@ export class RenderSystem extends EventSystem{
 	setBgColor(color:number)
 	{
 		this.renderer.setClearColor( color, 1 );
+	}
+
+	doFull()
+	{
+		this.container.requestFullscreen();
 	}
 
 

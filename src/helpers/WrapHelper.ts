@@ -1,6 +1,5 @@
 import {Vector2, Vector3,  Object3D, Line, LineBasicMaterial, BufferGeometry} from 'three';
 import {BaseHelper} from './BaseHelper';
-import {GameSystem} from '../systems/GameSystem';
 
 export interface WrapSettings{
 	worldWidth:number;
@@ -33,15 +32,10 @@ export interface WrapInfo {
 
 export class WrapHelper extends BaseHelper{
 
-	constructor(gm:GameSystem)
-	{
-		super(gm);
-	}
-
 	drawDebugBorder(parent:Object3D)
 	{
-		const w = this.gm.settings.worldSize.x;
-		const h = this.gm.settings.worldSize.y;
+		const w = this.gs.settings.worldSize.x;
+		const h = this.gs.settings.worldSize.y;
 
 		const z = 0.1;
 		const material = new LineBasicMaterial({color: 0x0000ff});
@@ -61,9 +55,9 @@ export class WrapHelper extends BaseHelper{
 
 	getWrapInfo(viewer:Vector2|Vector3):WrapInfo
 	{
-		var world_width = this.gm.settings.worldSize.x;
-		var world_height = this.gm.settings.worldSize.y;
-		var p = world_width * 0.5 - this.gm.settings.viewDistance;
+		var world_width = this.gs.settings.worldSize.x;
+		var world_height = this.gs.settings.worldSize.y;
+		var p = world_width * 0.5 - this.gs.settings.viewDistance;
 
 		var right_border = p;
 		var left_border = -p;
@@ -73,7 +67,7 @@ export class WrapHelper extends BaseHelper{
 		var lx = -world_width * 0.5 + right_visible;
 		var rx =  world_width * 0.5 - left_visible;
 
-		var p = world_height * 0.5 - this.gm.settings.viewDistance;
+		var p = world_height * 0.5 - this.gs.settings.viewDistance;
 		var top_border = p;
 		var bottom_border = -p;
 
@@ -138,8 +132,8 @@ export class WrapHelper extends BaseHelper{
 
 	wrapPosition(pos:Vector2|Vector3)
 	{
-		const w = this.gm.settings.worldSize.x * 0.5;
-		const h = this.gm.settings.worldSize.y * 0.5;
+		const w = this.gs.settings.worldSize.x * 0.5;
+		const h = this.gs.settings.worldSize.y * 0.5;
 		if (pos.x >= w)
 			pos.x -= 2*w;
 		if (pos.x <= -w)
@@ -153,14 +147,14 @@ export class WrapHelper extends BaseHelper{
 
 	processWrapEntitys(deltaTime:number)
 	{
-		var em = this.gm.entitysSystem;
+		var em = this.gs.entitysSystem;
 		var idLocal = 0;
 		if (idLocal > -1)
 		{
 			var le = em.entitys[idLocal];
 		}
 
-		var wrapInfo = this.gm.getWrapInfo();
+		var wrapInfo = this.gs.getWrapInfo();
 		var pos = new Vector3();
 
 		for (var id in em.entitys)
@@ -169,7 +163,7 @@ export class WrapHelper extends BaseHelper{
 				continue;
 			var e = em.entitys[id];
 			pos.copy(e.getPosition());
-			this.gm.getWrapPos(wrapInfo, pos);
+			this.gs.getWrapPos(wrapInfo, pos);
 			e.setPositionXY(pos.x, pos.y);
 		}
 	}

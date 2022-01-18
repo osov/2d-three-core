@@ -1,9 +1,7 @@
-import {Vector2, Vector3,  Object3D, Line, LineBasicMaterial, BufferGeometry, Event} from 'three';
 import {BaseHelper} from './BaseHelper';
-import {GameSystem} from '../systems/GameSystem';
-import * as t from 'three';
+import {Event} from 'three';
 
-export interface EventUpdate extends t.Event{
+export interface EventUpdate extends Event{
 	deltaTime:number;
 	now:number;
 }
@@ -14,11 +12,6 @@ export class LooperHelper extends BaseHelper{
 	private idTimer: number;
 	private lastUpdate:number = 0;
 	private lastUpdateTimeout:number = 0;
-
-	constructor(gm:GameSystem)
-	{
-		super(gm);
-	}
 
 	init()
 	{

@@ -7,13 +7,15 @@ interface BaseKeys{
 }
 
 export class EventSystem extends BaseSystem{
-
+	
+	public readonly container:HTMLElement;
 	public mousePos:Vector2 = new Vector2();
 	public baseKeys:BaseKeys = {left:false, right:false};
 
-	constructor()
+	constructor(container:HTMLElement)
 	{
 		super();
+		this.container = container;
 		document.addEventListener('pointermove', this.onPointerMove.bind(this), false );
 		document.addEventListener("touchmove",  this.onTouchMove.bind(this), false);
 		document.addEventListener('mousedown', this.onMouseDown.bind(this), false);
@@ -21,9 +23,22 @@ export class EventSystem extends BaseSystem{
 		document.addEventListener('touchstart', this.onTouchStart.bind(this), false);
 		document.addEventListener('touchend', this.onTouchEnd.bind(this), false);
 		window.addEventListener('resize', this.onResize.bind(this), false);
+		this.addEventFullscreen(container);
 	}
 
-	protected onResize()
+	addEventFullscreen(el:HTMLElement)
+	{
+		el.addEventListener("webkitfullscreenchange", this.onFullsSreenChange.bind(this));
+		el.addEventListener("mozfullscreenchange",    this.onFullsSreenChange.bind(this));
+		el.addEventListener("fullscreenchange",       this.onFullsSreenChange.bind(this));
+	}
+
+	protected onFullsSreenChange(event:Event)
+	{
+
+	}
+
+	protected onResize(event:UIEvent)
 	{
 
 	}
@@ -91,6 +106,11 @@ export class EventSystem extends BaseSystem{
 	{
 		this.mousePos.x = clientX;
 		this.mousePos.y = clientY;
+	}
+
+	isTouchMode()
+	{
+		return ('ontouchstart' in window);
 	}
 
 

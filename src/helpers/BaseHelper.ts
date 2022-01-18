@@ -3,12 +3,12 @@ import {GameSystem} from '../systems/GameSystem';
 
 export class BaseHelper extends BaseSystem{
 
-	protected gm:GameSystem;
+	protected gs:GameSystem;
 
 	constructor(manager:GameSystem)
 	{
 		super();
-		this.gm = manager;
+		this.gs = manager;
 	}
 
 	init()

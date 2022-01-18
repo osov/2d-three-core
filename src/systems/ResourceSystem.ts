@@ -91,7 +91,7 @@ export class ResourceSystem extends BaseSystem{
 	{
 		if (!this.textures[name])
 		{
-			console.warn("Текстура не загружена:", name);
+			this.warn("Текстура не загружена:", name);
 			return this.textures['bad'];
 		}
 		return this.textures[name];

@@ -29,7 +29,7 @@ export class PoolsManager extends BaseSystem{
 	registerParticlesPool(name:string, material:PointsMaterial, maxCount:number)
 	{
 		if (this.hasPool(name))
-			console.warn("Пул частиц с именем уже существует:", name);
+			this.warn("Пул частиц с именем уже существует:", name);
 		var stack = new ParticlesStack(material, maxCount);
 		this.particlesList[name] = stack;
 		this.rs.scene.add(stack);
@@ -41,7 +41,7 @@ export class PoolsManager extends BaseSystem{
 	registerObjectsPool(name:string, entity:Entity)
 	{
 		if (this.hasPool(name))
-			console.warn("Пул объектов с именем уже существует:", name);
+		this.warn("Пул объектов с именем уже существует:", name);
 		var pool = new ObjectsPool(entity);
 		this.pools[name] = pool;
 		return pool;
@@ -55,7 +55,7 @@ export class PoolsManager extends BaseSystem{
 	putPoolItem(entity:Entity)
 	{
 		if (!this.hasPool(entity.prefabName))
-			return console.warn("Пул для объекта не найден:", entity.prefabName);
+			return this.warn("Пул для объекта не найден:", entity.prefabName);
 		this.pools[entity.prefabName].put(entity);
 	}
 
