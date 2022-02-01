@@ -1,8 +1,8 @@
 import {Scene, Camera, WebGLRenderer, PerspectiveCamera, OrthographicCamera, Object3D,Vector2, Vector3} from 'three';
-import {EventSystem} from './EventSystem';
 import {ResourceSystem} from './ResourceSystem';
 import {EntitysSystem} from './EntitysSystem';
 import {Entity} from '../entitys/Entity';
+import { BaseSystem, EventBus, Input } from 'ecs-threejs';
 
 
 export interface InitParams{
@@ -13,17 +13,19 @@ export interface InitParams{
 	container?:HTMLElement|null;
 }
 
-export class RenderSystem extends EventSystem{
+export class RenderSystem extends BaseSystem{
 	public readonly scene:Scene;
 	public readonly camera:Camera;
 	public readonly renderer:WebGLRenderer;
 	public readonly resourceSystem:ResourceSystem;
 	public readonly entitysSystem:EntitysSystem;
 	public readonly params:InitParams;
+	public readonly container:HTMLElement;
 
 	constructor(params:InitParams = {isPerspective:false, worldWrap:false, worldSize:new Vector2(1,1), viewDistance:1})
 	{
-		super(params.container ? params.container : document.body);
+		super();
+		this.container = params.container ? params.container : document.body;
 		this.params = params;
 		const width = window.innerWidth;
 		const height =  window.innerHeight;
@@ -52,6 +54,8 @@ export class RenderSystem extends EventSystem{
 
 		this.resourceSystem = new ResourceSystem();
 		this.entitysSystem = new EntitysSystem(this);
+		Input.getInstance().init(this.container);
+		EventBus.subscribeEvent('onResize', this.onResize.bind(this));
 	}
 
 	protected async initRender(fontUrl:string)
@@ -59,9 +63,10 @@ export class RenderSystem extends EventSystem{
 		await this.resourceSystem.init(fontUrl);
 	}
 
-
+	//@addSubscribeEvent('onResize')
 	protected onResize()
 	{
+		//console.log(this)
 		const width = this.container.clientWidth;
 		const height =  this.container.clientHeight;
 		if (this.params.isPerspective)

@@ -1,3 +1,4 @@
+import { Input } from "ecs-threejs";
 import { Vector2 } from "three";
 import { BaseHelper } from "./BaseHelper";
 
@@ -27,7 +28,7 @@ export class TouchInputHelper extends BaseHelper {
 		this.shotPad.addEventListener('touchstart', this.touchShotStart.bind(this), false);
 		this.shotPad.addEventListener('touchend', this.touchShotStop.bind(this), true);
 		document.addEventListener('touchmove', this.touchMove.bind(this), true);
-		if (this.gs.isTouchMode() && trackpad.parentElement)
+		if (Input.isTouchMode() && trackpad.parentElement)
 			trackpad.parentElement.style.display = '';
 	}
 
