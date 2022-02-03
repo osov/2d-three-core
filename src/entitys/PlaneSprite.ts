@@ -1,4 +1,4 @@
-import { Object3D,  Mesh, MeshBasicMaterial, PlaneBufferGeometry, Raycaster, Intersection} from 'three';
+import {  Mesh, MeshBasicMaterial, PlaneBufferGeometry} from 'three';
 import {BaseMesh} from './BaseMesh';
 
 

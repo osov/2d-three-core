@@ -186,9 +186,11 @@ export class GameSystem extends RenderSystem {
 				}
 			}
 		}
-
+		
+		this.renderer.clear()
 		this.renderer.render(this.scene, this.camera);
-
+		this.renderer.clearDepth();
+		this.renderer.render( this.sceneOrtho, this.cameraOrtho);
 		this.dispatchEvent({ type: 'onAfterRender', deltaTime, now });
 	}
 

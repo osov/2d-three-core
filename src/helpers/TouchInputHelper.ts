@@ -114,7 +114,7 @@ export class TouchInputHelper extends BaseHelper {
 			this.curShotStatus = status;
 			if (typ == 'move')
 			this.curMoveStatus = status;
-		this.dispatchEvent({ type: 'touchEvent', typ, status, data });
+	//	this.dispatchEvent({ type: 'touchEvent', typ, status, data });
 		//console.log(typ, status, data);
 	}
 

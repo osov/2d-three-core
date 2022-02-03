@@ -21,7 +21,7 @@ export function screenToPoint(point:Vector3|Vector2, camera:Camera, container:HT
 {
 	var w = container.clientWidth;
 	var h = container.clientHeight;
-	var vector = new Vector3(( point.x / w ) * 2 - 1, -( point.y / h ) * 2 + 1, -1);
+	var vector = new Vector3(( point.x / w ) * 2 - 1, ( point.y / h ) * 2 - 1, -1);
 	vector = vector.unproject(camera);
 	return vector;
 }

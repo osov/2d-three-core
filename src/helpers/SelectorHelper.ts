@@ -14,7 +14,7 @@ export class SelectorHelper extends BaseHelper {
 
 	private raycaster = new Raycaster();
 	private list: BaseEntity[] = [];
-	private monitoredEvents: { [k: string]: string[] } = {};
+	private monitoredEvents: {[id:number]:{ [k: string]: string[] }} = {};
 
 	init() {
 		EventBus.subscribeEvent<PointerEventData>('onPointerDown', this.onPointerDown.bind(this));
@@ -64,17 +64,19 @@ export class SelectorHelper extends BaseHelper {
 		this.onPointerUp(e);
 	}
 
-	private addMonitoredEvents(event: string, entity: BaseEntity) {
-		if (!this.monitoredEvents[event])
-			this.monitoredEvents[event] = [];
+	private addMonitoredEvents(event: string, entity: BaseEntity, e:PointerEventData) {
+		if (!this.monitoredEvents[e.pointerId])
+			this.monitoredEvents[e.pointerId] = {};
+		if (!this.monitoredEvents[e.pointerId][event])
+		this.monitoredEvents[e.pointerId][event] = [];
 		let eventName = EventBus.getEntityPrefixEvent(event, entity);
-		this.monitoredEvents[event].push(eventName);
+		this.monitoredEvents[e.pointerId][event].push(eventName);
 	}
 
 	private dispathMonitoredEvents(event: string, e:PointerEventData) {
-		if (!this.monitoredEvents[event])
+		if (!this.monitoredEvents[e.pointerId] || !this.monitoredEvents[e.pointerId][event])
 			return;
-		let list = this.monitoredEvents[event];
+		let list = this.monitoredEvents[e.pointerId][event];
 		for (let i = 0; i < list.length; i++) {
 			const it = list[i];
 			EventBus.dispatchEvent(it, e);
@@ -83,14 +85,11 @@ export class SelectorHelper extends BaseHelper {
 
 	private checkOnIntersect(typeEvent: string, e: PointerEventData) {
 
-		let size = Input.ScreenSize;
-		let x = Input.mousePos.x;
-		let y = -Input.mousePos.y + size.y;
 		var pointer = new Vector2(
-			(x / this.gs.container.clientWidth) * 2 - 1,
-			- (y / this.gs.container.clientHeight) * 2 + 1
+			(Input.mousePos.x / this.gs.container.clientWidth) * 2 - 1,
+			(Input.mousePos.y / this.gs.container.clientHeight) * 2 - 1
 		);
-		this.raycaster.setFromCamera(pointer, this.gs.camera);
+		this.raycaster.setFromCamera(pointer, this.gs.cameraOrtho);
 		const intersects = this.raycaster.intersectObjects(this.list, false);
 		if (intersects.length > 0) {
 			const res = intersects.filter(function (res) { return res && res.object && res.object instanceof BaseEntity; })[0];
@@ -99,8 +98,8 @@ export class SelectorHelper extends BaseHelper {
 				let isMonitor = EventBus.dispatchEventEntity<PointerEventData>(typeEvent, entity, e);
 				if (isMonitor && typeEvent == 'onPointerDown'){
 
-					this.addMonitoredEvents('onDrag', entity);
-					this.addMonitoredEvents('onPointerUp', entity);
+					this.addMonitoredEvents('onDrag', entity, e);
+					this.addMonitoredEvents('onPointerUp', entity, e);
 				}
 
 
