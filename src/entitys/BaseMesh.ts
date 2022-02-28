@@ -18,7 +18,7 @@ export class BaseMesh extends Entity{
 		return Mesh.prototype.raycast.apply(this, [raycaster, intersects]);
 	}
 
-	setColor(color:string, alpha = -1)
+	setColor(color:string, alpha = 1)
 	{
 		var mesh = this;
 		var mat = mesh.material;

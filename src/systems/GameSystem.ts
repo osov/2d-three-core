@@ -6,14 +6,17 @@ import { SelectorHelper } from '../helpers/SelectorHelper';
 import { MouseInputHelper } from '../helpers/MouseInputHelper';
 import { TouchInputHelper } from '../helpers/TouchInputHelper';
 import { LooperHelper, EventUpdate } from '../helpers/LooperHelper';
+import { SceneHelper } from '../helpers/SceneHelper';
 import { Entity } from '../entitys/Entity';
 import * as gUtils from '../core/gameUtils';
+import { MasterPool } from '../pool/MasterPool';
+
 
 interface WorldSettings {
-	worldWrap: boolean;
-	worldSize: Vector2;
-	viewDistance: number;
-	cameraSpeed: number;
+	worldWrap?: boolean;
+	worldSize?: Vector2;
+	viewDistance?: number;
+	cameraSpeed?: number;
 	fontUrl: string;
 }
 
@@ -48,14 +51,16 @@ export class GameSystem extends RenderSystem {
 
 		this.looperHelper.init();
 		this.mouseHelper.init();
-		this.touchHelper.initUi(document.getElementsByClassName('mobc_dir')[0] as HTMLElement, 
-								document.getElementsByClassName('mobc_dir_p')[0] as HTMLElement, 
-								document.getElementsByClassName('mobc_shot')[0] as HTMLElement)
+		// this.touchHelper.initUi(document.getElementsByClassName('mobc_dir')[0] as HTMLElement, 
+		// 						document.getElementsByClassName('mobc_dir_p')[0] as HTMLElement, 
+		// 						document.getElementsByClassName('mobc_shot')[0] as HTMLElement)
 		this.cameraHelper.init();
 		this.wrapHelper.init();
 		this.selectorHelper.init();
 
-		this.wrapHelper.drawDebugBorder(this.scene);
+		//this.wrapHelper.drawDebugBorder(this.scene);
+		new MasterPool(this);
+		new SceneHelper(this).init();
 	}
 
 	start() {
@@ -126,6 +131,7 @@ export class GameSystem extends RenderSystem {
 
 	// Очередь обработки: network, time system, pool, wrap, render
 	update(deltaTime: number, now: number) {
+		
 		this.dispatchEvent({ type: 'onBeforeRender', deltaTime, now });
 		this.entitysSystem.update(deltaTime);
 
@@ -161,8 +167,8 @@ export class GameSystem extends RenderSystem {
 		if (localEntity) {
 			const minRange = 200;
 			const _pos = localEntity.getPosition();
-			var dx = this.params.worldSize.x * 0.5 - Math.abs(_pos.x);
-			var dy = this.params.worldSize.y * 0.5 - Math.abs(_pos.y);
+			var dx = this.params.worldSize!.x * 0.5 - Math.abs(_pos.x);
+			var dy = this.params.worldSize!.y * 0.5 - Math.abs(_pos.y);
 			isUpd = dx < minRange || dy < minRange;
 		}
 

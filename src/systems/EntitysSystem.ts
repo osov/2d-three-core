@@ -85,8 +85,8 @@ export class EntitysSystem extends BaseSystem {
 	private addToWrappedList(entity: Entity, isDynamic: boolean = true) {
 		if (!this.renderSystem.params.worldWrap)
 			return;
-		const cx = this.renderSystem.params.worldSize.x * 0.5 - this.renderSystem.params.viewDistance;
-		const cy = this.renderSystem.params.worldSize.y * 0.5 - this.renderSystem.params.viewDistance;
+		const cx = this.renderSystem.params.worldSize!.x * 0.5 - this.renderSystem.params.viewDistance!;
+		const cy = this.renderSystem.params.worldSize!.y * 0.5 - this.renderSystem.params.viewDistance!;
 		if (!isDynamic) {
 			const pos = entity.getPosition();
 			if ((pos.x >= -cx && pos.x <= cx) && (pos.y >= -cy && pos.y <= cy))

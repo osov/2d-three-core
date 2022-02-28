@@ -11,10 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "ecs-threejs": "file:../ecs-threejs",
-    "three": "^0.136.0",
+    "three": "^0.138.0",
     "troika-three-text": "^0.44.0"
   },
   "devDependencies": {
-    "@types/three": "^0.136.1"
+    "@types/three": "^0.137.0"
   }
 }

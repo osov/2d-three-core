@@ -1,4 +1,4 @@
-import { Scene, Camera, WebGLRenderer, PerspectiveCamera, OrthographicCamera, Object3D, Vector2, Vector3 } from 'three';
+import { Scene, Camera, WebGLRenderer, PerspectiveCamera, OrthographicCamera, Object3D, Vector2, Vector3, AmbientLight } from 'three';
 import { ResourceSystem } from './ResourceSystem';
 import { EntitysSystem } from './EntitysSystem';
 import { Entity } from '../entitys/Entity';
@@ -8,9 +8,9 @@ import { UiSprite } from '../entitys/UiSprite';
 
 export interface InitParams {
 	isPerspective?: boolean;
-	worldWrap: boolean;
-	worldSize: Vector2;
-	viewDistance: number;
+	worldWrap?: boolean;
+	worldSize?: Vector2;
+	viewDistance?: number;
 	container?: HTMLElement | null;
 }
 
@@ -24,6 +24,7 @@ export class RenderSystem extends BaseSystem {
 	public readonly entitysSystem: EntitysSystem;
 	public readonly params: InitParams;
 	public readonly container: HTMLElement;
+	protected light:AmbientLight;
 
 	constructor(params: InitParams = { isPerspective: false, worldWrap: false, worldSize: new Vector2(1, 1), viewDistance: 1 }) {
 		super();
@@ -52,6 +53,9 @@ export class RenderSystem extends BaseSystem {
 		this.renderer.setSize(width, height);
 		this.renderer.setClearColor(0xffffff, 1);
 		this.renderer.autoClear = false;
+
+		this.light = new AmbientLight( 0xffffff );
+		this.scene.add( this.light );
 
 		this.container.appendChild(this.renderer.domElement);
 		this.container.oncontextmenu = function () { return false; }
@@ -161,6 +165,7 @@ export class RenderSystem extends BaseSystem {
 
 	setBgColor(color: number) {
 		this.renderer.setClearColor(color, 1);
+		this.light.color.set(color);
 	}
 
 	doFull() {

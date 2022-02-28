@@ -4,4 +4,10 @@ import {PlaneSprite} from './entitys/PlaneSprite';
 import {SimpleText} from './entitys/SimpleText';
 import * as gUtils from './core/gameUtils';
 import { UiSprite } from './entitys/UiSprite';
-export {gUtils, GameSystem, Entity, PlaneSprite, UiSprite, SimpleText};
+import { MasterPool } from './pool/MasterPool';
+
+interface floatMarker{isFloat?:true;}
+type float = number & floatMarker;
+
+
+export {gUtils, GameSystem, Entity, PlaneSprite, UiSprite, SimpleText, MasterPool, float};

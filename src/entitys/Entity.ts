@@ -2,8 +2,6 @@ import {BaseEntity} from 'ecs-threejs';
 
 export class Entity extends BaseEntity{
 
-	public prefabName:string;
-
 	constructor()
 	{
 		super();
@@ -23,6 +21,7 @@ export class Entity extends BaseEntity{
 			dst.add(copy);
 			copy.copy(childSrc, false);
 		}
+		dst.scale.copy(this.scale);
 	}
 
 	makeInstance()

@@ -18,5 +18,5 @@
 			"three":["../node_modules/ecs-threejs/node_modules/three"]
 		}
 	},
-	"include": ["**/*.ts"]
+	"include": ["src/**/*.ts"]
 }
