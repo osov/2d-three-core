@@ -49,7 +49,9 @@ export class PoolsManager extends BaseSystem{
 
 	getPoolItem(name:string)
 	{
-		return this.pools[name].get();
+		var item = this.pools[name].get();
+		item.prefabName = name;
+		return item;
 	}
 
 	putPoolItem(entity:Entity)

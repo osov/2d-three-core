@@ -10,7 +10,7 @@ export class SceneHelper extends BaseHelper {
 
    public static addToScene(entity:Entity)
     {
-        SceneHelper.instance.gs.addEntity(entity);
+        SceneHelper.instance.gs.addEntity(entity, entity.getPosition());
     }
 
 }

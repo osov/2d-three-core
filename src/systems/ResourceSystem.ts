@@ -5,13 +5,16 @@ const {preloadFont} = require('troika-three-text');
 
 export class ResourceSystem extends BaseSystem{
 
+	public static instance:ResourceSystem;
 	public fontUrl:string = '';
 	private readonly textures:{[key: string]: Texture} = {};
 	private badMaterial:MeshBasicMaterial;
+	private textData:{[k:string]:string} = {};
 
 	constructor()
 	{
 		super();
+		ResourceSystem.instance = this;
 	}
 
 	async init(fontUrl:string)
@@ -100,6 +103,19 @@ export class ResourceSystem extends BaseSystem{
 	getMaterial(name:string):MeshBasicMaterial
 	{
 		return this.badMaterial;
+	}
+
+	async preloadTextData(path:string)
+	{
+		var r = await fetch(path);
+		var text = await r.text();
+		this.textData[path] = text;
+		return text;
+	}
+
+	getTextData(path:string)
+	{
+		return this.textData[path];
 	}
 
 }

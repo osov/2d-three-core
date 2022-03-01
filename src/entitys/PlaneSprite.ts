@@ -1,8 +1,10 @@
+import { MasterPool } from '../pool/MasterPool';
 import {  Mesh, MeshBasicMaterial, PlaneBufferGeometry} from 'three';
 import {BaseMesh} from './BaseMesh';
 
 
 export class PlaneSprite extends BaseMesh{
+	protected className = 'PlaneSprite';
 
 	constructor(material:MeshBasicMaterial)
 	{
@@ -14,7 +16,7 @@ export class PlaneSprite extends BaseMesh{
 
 	makeInstance()
 	{
-		var copy = new PlaneSprite(this.material);
+		var copy = new PlaneSprite(MasterPool.isCloneMaterial ? this.material.clone() : this.material);
 		this.makeChildsInstance(copy);
 		return copy;
 	}

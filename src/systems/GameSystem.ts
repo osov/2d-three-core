@@ -21,7 +21,7 @@ interface WorldSettings {
 }
 
 export class GameSystem extends RenderSystem {
-
+	public static instance:GameSystem;
 	public intervalStaticUpdate:number = 100;
 	public settings: WorldSettings;
 	public cameraHelper: CameraHelper;
@@ -37,6 +37,7 @@ export class GameSystem extends RenderSystem {
 
 	constructor(params: InitParams = { isPerspective: false, worldWrap: false, worldSize: new Vector2(1, 1), viewDistance: 1 }) {
 		super(params);
+		GameSystem.instance = this;
 	}
 
 	async init(settings: WorldSettings) {

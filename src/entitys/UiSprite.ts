@@ -1,7 +1,9 @@
 import { MeshBasicMaterial, Vector2 } from 'three';
 import { PlaneSprite } from './PlaneSprite';
+import { MasterPool } from '../pool/MasterPool';
 
 export class UiSprite extends PlaneSprite {
+    protected className = 'UiSprite';
     public align: Vector2 = new Vector2(0, 0);
     public srcPos: Vector2 = new Vector2();
 
@@ -15,7 +17,7 @@ export class UiSprite extends PlaneSprite {
     }
 
     makeInstance() {
-        var copy = new UiSprite(this.material);
+        var copy = new UiSprite(MasterPool.isCloneMaterial ? this.material.clone() : this.material);
         this.makeChildsInstance(copy);
         return copy;
     }

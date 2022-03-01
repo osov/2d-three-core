@@ -8,6 +8,7 @@ import { PoolsManager } from "./PoolsManager";
 export class MasterPool extends BaseSystem {
     public static instance:MasterPool;
     private manager: PoolsManager;
+    public static isCloneMaterial = false;
 
     constructor(system:RenderSystem) {
         super();
@@ -15,47 +16,53 @@ export class MasterPool extends BaseSystem {
         MasterPool.instance = this;
     }
 
-    public registerParticlesPool(name:string, material:PointsMaterial, maxCount:number)
+    public static setMaterialClone(val:boolean)
+    {
+        this.isCloneMaterial = val;
+    }
+
+    public static registerParticlesPool(name:string, material:PointsMaterial, maxCount:number)
 	{
-        return this.manager.registerParticlesPool(name, material, maxCount);
+        return MasterPool.instance.manager.registerParticlesPool(name, material, maxCount);
     }
 
-    public registerObjectsPool(name:string, entity:Entity)
+    public static registerObjectsPool(name:string, entity:Entity)
 	{
-        return this.manager.registerObjectsPool(name, entity);
+        entity.prefabName = name;
+        return MasterPool.instance.manager.registerObjectsPool(name, entity);
     }
 
-    public GetObject(name: string): Entity {
-        return this.manager.getPoolItem(name);
+    public static GetObject(name: string): Entity {
+        return MasterPool.instance.manager.getPoolItem(name);
     }
 
-    public GetObjectAtTime(name: string, timeMs = 5000): Entity {
+    public static GetObjectAtTime(name: string, timeMs = 5000): Entity {
         // todo
         return this.GetObject(name);
     }
 
-    public ReturnObject(name: string, go: Entity) {
-        this.manager.putPoolItem(go);
+    public static ReturnObject(name: string, go: Entity) {
+        MasterPool.instance.manager.putPoolItem(go);
     }
 
-    public GetEntity(name:string)
+    public static GetEntity(name:string)
     {
-        return this.manager.getPoolItem(name) as Entity;
+        return MasterPool.instance.manager.getPoolItem(name) as Entity;
     }
 
-    public ReturnEntity(be:Entity)
+    public static ReturnEntity(be:Entity)
     {
-        this.manager.putPoolItem(be);
+        MasterPool.instance.manager.putPoolItem(be);
     }
 
-    public GetParticlesPool(name: string): Entity {
+    public static GetParticlesPool(name: string): Entity {
         // todo
         return this.GetObject(name);
     }
 
-    public Update(deltaTime:number)
+    public static Update(deltaTime:number)
     {
-        this.manager.update(deltaTime);
+        MasterPool.instance.manager.update(deltaTime);
     }
 
 

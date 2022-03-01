@@ -134,6 +134,10 @@ export class RenderSystem extends BaseSystem {
 	// ----------------------------------------------------------------------------------------------------------
 	// Methods
 	// ----------------------------------------------------------------------------------------------------------
+	async preloadTextData(path:string)
+	{
+		return this.resourceSystem.preloadTextData(path);
+	}
 
 	async loadTextures(path: string, names: string[]) {
 		return this.resourceSystem.loadTextures(path, names);

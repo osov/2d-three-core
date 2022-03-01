@@ -5,9 +5,6 @@ import {SimpleText} from './entitys/SimpleText';
 import * as gUtils from './core/gameUtils';
 import { UiSprite } from './entitys/UiSprite';
 import { MasterPool } from './pool/MasterPool';
+import { ResourceSystem } from './systems/ResourceSystem';
 
-interface floatMarker{isFloat?:true;}
-type float = number & floatMarker;
-
-
-export {gUtils, GameSystem, Entity, PlaneSprite, UiSprite, SimpleText, MasterPool, float};
+export {gUtils, GameSystem, Entity, PlaneSprite, UiSprite, SimpleText, MasterPool, ResourceSystem};
