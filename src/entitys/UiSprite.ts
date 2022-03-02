@@ -18,6 +18,7 @@ export class UiSprite extends PlaneSprite {
 
     makeInstance() {
         var copy = new UiSprite(MasterPool.isCloneMaterial ? this.material.clone() : this.material);
+        copy.imgList = this.imgList;
         this.makeChildsInstance(copy);
         return copy;
     }

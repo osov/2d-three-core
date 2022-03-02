@@ -29,6 +29,14 @@ export class Entity extends BaseEntity{
 		}
 		copy.scale.copy(this.scale);
 		copy.userData = JSON.parse(JSON.stringify(this.userData)); //Object.assign не пашет видимо из-за глубины объекта
+		if (Object.keys(this.components).length > 0)
+		{
+			for (var k in this.components) {
+				const cmp = this.components[k];
+				var c = new (cmp as any).constructor();
+				copy.addComponent(c);
+			}
+		}
 	}
 
 	private copyProps(src:Entity, target:Entity)

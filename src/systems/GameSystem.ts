@@ -1,4 +1,4 @@
-import { Vector2, Vector3, Event, PointsMaterial } from 'three';
+import { Vector2, Vector3, Event, PointsMaterial, Object3D } from 'three';
 import { RenderSystem, InitParams } from './RenderSystem';
 import { CameraHelper } from '../helpers/CameraHelper';
 import { WrapHelper, WrapInfo } from '../helpers/WrapHelper';
@@ -72,6 +72,11 @@ export class GameSystem extends RenderSystem {
 	// ----------------------------------------------------------------------------------------------------------
 	// Core
 	// ----------------------------------------------------------------------------------------------------------
+	addByName(mesh:Object3D, name:string)
+	{
+		mesh.userData['name'] = name;
+		this.scene.add(mesh);
+	}
 
 	addToRaycast(entity: Entity) {
 		this.selectorHelper.add(entity)

@@ -105,11 +105,11 @@ export class ResourceSystem extends BaseSystem{
 		return this.badMaterial;
 	}
 
-	async preloadTextData(path:string)
+	async preloadTextData(path:string, newName:string = '')
 	{
 		var r = await fetch(path);
 		var text = await r.text();
-		this.textData[path] = text;
+		this.textData[newName != '' ? newName : path] = text;
 		return text;
 	}
 

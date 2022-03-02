@@ -1,7 +1,4 @@
 import {Vector2, Vector3, Camera} from 'three';
-import {mtRandSeed, randomSeed} from './utils';
-
-export {mtRandSeed, randomSeed};
 
 export const deepPosition = new Vector3(9999999,9999999);
 

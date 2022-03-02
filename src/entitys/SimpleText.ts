@@ -18,6 +18,7 @@ export class SimpleText extends BaseMesh{
 		mesh.text =  text;
 		mesh.fontSize = fontSize;
 		mesh.anchorX = '50%';
+		mesh.anchorY = '50%';
 		this.add(mesh);
 		this.mesh = mesh;
 		this.text = text;

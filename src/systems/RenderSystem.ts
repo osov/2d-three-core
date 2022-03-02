@@ -24,7 +24,7 @@ export class RenderSystem extends BaseSystem {
 	public readonly entitysSystem: EntitysSystem;
 	public readonly params: InitParams;
 	public readonly container: HTMLElement;
-	protected light:AmbientLight;
+	protected light: AmbientLight;
 
 	constructor(params: InitParams = { isPerspective: false, worldWrap: false, worldSize: new Vector2(1, 1), viewDistance: 1 }) {
 		super();
@@ -54,8 +54,8 @@ export class RenderSystem extends BaseSystem {
 		this.renderer.setClearColor(0xffffff, 1);
 		this.renderer.autoClear = false;
 
-		this.light = new AmbientLight( 0xffffff );
-		this.scene.add( this.light );
+		this.light = new AmbientLight(0xffffff);
+		this.scene.add(this.light);
 
 		this.container.appendChild(this.renderer.domElement);
 		this.container.oncontextmenu = function () { return false; }
@@ -65,6 +65,14 @@ export class RenderSystem extends BaseSystem {
 		this.entitysSystem = new EntitysSystem(this);
 		Input.getInstance().init(this.container);
 		EventBus.subscribeEvent('onResize', this.onResize.bind(this));
+	}
+
+	public setZoom(z: number) {
+		if (this.params.isPerspective)
+			return console.warn("Камера перспективная задана");
+
+		(this.camera as OrthographicCamera).zoom = z;
+		this.onResize();
 	}
 
 	protected async initRender(fontUrl: string) {
@@ -125,7 +133,7 @@ export class RenderSystem extends BaseSystem {
 		}
 	}
 
-	public addUi(mesh:Object3D){
+	public addUi(mesh: Object3D) {
 		this.sceneOrtho.add(mesh);
 		this.onResize();
 	}
@@ -134,9 +142,8 @@ export class RenderSystem extends BaseSystem {
 	// ----------------------------------------------------------------------------------------------------------
 	// Methods
 	// ----------------------------------------------------------------------------------------------------------
-	async preloadTextData(path:string)
-	{
-		return this.resourceSystem.preloadTextData(path);
+	async preloadTextData(path: string, newName: string = '') {
+		return this.resourceSystem.preloadTextData(path, newName);
 	}
 
 	async loadTextures(path: string, names: string[]) {
@@ -169,7 +176,7 @@ export class RenderSystem extends BaseSystem {
 
 	setBgColor(color: number) {
 		this.renderer.setClearColor(color, 1);
-		this.light.color.set(color);
+		//this.light.color.set(color);
 	}
 
 	doFull() {
