@@ -9,6 +9,7 @@ const startLocalId = 65535;
 
 export class EntitysSystem extends BaseSystem {
 
+	public static instance:EntitysSystem;
 	public entitys: { [key: number]: Entity } = {};
 	public dynamicEntitys: { [key: number]: Entity } = {};
 	public staticEntitys: { [key: number]: Entity } = {};
@@ -17,14 +18,12 @@ export class EntitysSystem extends BaseSystem {
 	private renderSystem: RenderSystem;
 	private poolsManager: PoolsManager;
 
-	constructor(system: RenderSystem) {
+	constructor() {
 		super();
-		this.renderSystem = system;
-		this.poolsManager = new PoolsManager(system);
-	}
-
-	init() {
-
+		EntitysSystem.instance = this;
+		this.renderSystem = RenderSystem.instance;
+		this.poolsManager = new PoolsManager();
+		
 	}
 
 	private createBadEntity() {
@@ -60,7 +59,7 @@ export class EntitysSystem extends BaseSystem {
 			this.warn("Сущность с таким ид существует", id, this.entitys[id]);
 			this.remove(this.entitys[id]);
 		}
-		entity.onAdd(this.renderSystem.params);
+		entity.onBeforeAdd();
 		entity.idEntity = id;
 		this.entitys[id] = entity;
 		if (isDynamic)
@@ -71,7 +70,7 @@ export class EntitysSystem extends BaseSystem {
 		entity.setPosition(pos);
 		entity.setRotationDeg(angleDeg);
 		this.addToWrappedList(entity, isDynamic);
-		entity.onAdded();
+		entity.onAfterAdd();
 		this.renderSystem.dispatchEvent({ type: 'onAddedEntity', entity: entity });
 		//console.log('addEntity',entity.prefabName, id);
 		return entity;

@@ -1,5 +1,5 @@
 import { Scene, Camera, WebGLRenderer, PerspectiveCamera, OrthographicCamera, Object3D, Vector2, Vector3, AmbientLight } from 'three';
-import { ResourceSystem } from './ResourceSystem';
+import { ResourceSystem } from 'ecs-threejs/src/systems/ResourceSystem';
 import { EntitysSystem } from './EntitysSystem';
 import { Entity } from '../entitys/Entity';
 import { BaseSystem, EventBus, Input } from 'ecs-threejs';
@@ -15,6 +15,7 @@ export interface InitParams {
 }
 
 export class RenderSystem extends BaseSystem {
+	public static instance:RenderSystem;
 	public readonly scene: Scene;
 	public readonly sceneOrtho: Scene;
 	public readonly camera: Camera;
@@ -28,6 +29,9 @@ export class RenderSystem extends BaseSystem {
 
 	constructor(params: InitParams = { isPerspective: false, worldWrap: false, worldSize: new Vector2(1, 1), viewDistance: 1 }) {
 		super();
+		RenderSystem.instance = this;
+		new Input();
+
 		this.container = params.container ? params.container : document.body;
 		this.params = params;
 		const width = window.innerWidth;
@@ -62,14 +66,15 @@ export class RenderSystem extends BaseSystem {
 		this.onResize();
 
 		this.resourceSystem = new ResourceSystem();
-		this.entitysSystem = new EntitysSystem(this);
-		Input.getInstance().init(this.container);
+		this.entitysSystem = new EntitysSystem();
+
+		
 		EventBus.subscribeEvent('onResize', this.onResize.bind(this));
 	}
 
 	public setZoom(z: number) {
 		if (this.params.isPerspective)
-			return console.warn("Камера перспективная задана");
+			return console.warn("Камера не ортографическая");
 
 		(this.camera as OrthographicCamera).zoom = z;
 		this.onResize();
@@ -79,9 +84,11 @@ export class RenderSystem extends BaseSystem {
 		await this.resourceSystem.init(fontUrl);
 	}
 
-	//@addSubscribeEvent('onResize')
+	public doResize(){
+		this.onResize();
+	}
+
 	protected onResize() {
-		//console.log(this)
 		const width = this.container.clientWidth;
 		const height = this.container.clientHeight;
 		if (this.params.isPerspective) {
@@ -176,7 +183,7 @@ export class RenderSystem extends BaseSystem {
 
 	setBgColor(color: number) {
 		this.renderer.setClearColor(color, 1);
-		//this.light.color.set(color);
+		this.light.color.set(color);
 	}
 
 	doFull() {

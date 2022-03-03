@@ -8,10 +8,16 @@ import {BaseHelper} from './BaseHelper';
 */
 
 export class CameraHelper extends BaseHelper{
-
+	public static instance:CameraHelper;
 	private readonly lookingAt:Vector2 = new Vector2();
 	public readonly bgPhase:Vector2 = new Vector2();
 	public readonly bgOffset:Vector2 = new Vector2();
+
+	constructor()
+	{
+		super();
+		CameraHelper.instance = this;
+	}
 
 	private centerCamera(x:number, y:number)
 	{
@@ -25,8 +31,8 @@ export class CameraHelper extends BaseHelper{
 
 		var dir = new Vector2(cameraTarget.x, cameraTarget.y).sub(this.lookingAt);
 		var dst = new Vector2();
-		const worldWidth = this.gs.settings.worldSize.x;
-		const worldHeight = this.gs.settings.worldSize.y;
+		const worldWidth = this.gs.settings.worldSize!.x;
+		const worldHeight = this.gs.settings.worldSize!.y;
 		// ось Х
 		if (dir.x > worldWidth * 0.5)
 		{
@@ -39,7 +45,7 @@ export class CameraHelper extends BaseHelper{
 			this.bgPhase.x -=1;
 		}
 		else
-			dst.x = this.lookingAt.x + dir.x * this.gs.settings.cameraSpeed * deltaTime;
+			dst.x = this.lookingAt.x + dir.x * this.gs.settings.cameraSpeed! * deltaTime;
 
 		// ось Y
 		if (dir.y > worldHeight * 0.5)
@@ -53,28 +59,10 @@ export class CameraHelper extends BaseHelper{
 			this.bgPhase.y -=1;
 		}
 		else
-			dst.y = this.lookingAt.y + dir.y * this.gs.settings.cameraSpeed * deltaTime;
+			dst.y = this.lookingAt.y + dir.y * this.gs.settings.cameraSpeed! * deltaTime;
 
-		/*var bgOffsetX = this.bgPhase.x * worldWidth + this.camera.position.x;
-		var bgOffsetY = this.bgPhase.y * worldHeight + this.camera.position.y;
-
-		var ox = cameraTempTargetX - this.camera.position.x;
-		if (ox > 1)
-			ox = this.bgOffset.x;
-		if (ox < -1)
-			ox = this.bgOffset.x;
-
-		var oy = cameraTempTargetY - this.camera.position.y;
-		if (oy > 1)
-			oy = this.bgOffset.y;
-		if (oy < -1)
-			oy = this.bgOffset.y;*/
 
 		this.centerCamera(dst.x, dst.y);
 
-		//this.world.dispatchEvent({"type": 'bgOffset', "x":ox, "y":oy});
-		
-		//this.bgOffset.x = ox;
-		//this.bgOffset.y = oy;
 	}
 }

@@ -4,12 +4,11 @@ import { CameraHelper } from '../helpers/CameraHelper';
 import { WrapHelper, WrapInfo } from '../helpers/WrapHelper';
 import { SelectorHelper } from '../helpers/SelectorHelper';
 import { MouseInputHelper } from '../helpers/MouseInputHelper';
-import { TouchInputHelper } from '../helpers/TouchInputHelper';
 import { LooperHelper, EventUpdate } from '../helpers/LooperHelper';
-import { SceneHelper } from '../helpers/SceneHelper';
 import { Entity } from '../entitys/Entity';
 import * as gUtils from '../core/gameUtils';
 import { MasterPool } from '../pool/MasterPool';
+import { SceneHelper } from '../helpers/SceneHelper';
 
 
 interface WorldSettings {
@@ -28,7 +27,6 @@ export class GameSystem extends RenderSystem {
 	public wrapHelper: WrapHelper;
 	public selectorHelper: SelectorHelper;
 	public mouseHelper: MouseInputHelper;
-	public touchHelper:TouchInputHelper;
 	private looperHelper: LooperHelper;
 	public idLocalEntity: number = -1;
 	private wrapInfo: WrapInfo;
@@ -43,25 +41,21 @@ export class GameSystem extends RenderSystem {
 	async init(settings: WorldSettings) {
 		this.settings = settings;
 		await super.initRender(settings.fontUrl);
-		this.looperHelper = new LooperHelper(this);
-		this.cameraHelper = new CameraHelper(this);
-		this.wrapHelper = new WrapHelper(this);
-		this.selectorHelper = new SelectorHelper(this);
-		this.mouseHelper = new MouseInputHelper(this);
-		this.touchHelper = new TouchInputHelper(this);
+		this.looperHelper = new LooperHelper();
+		this.cameraHelper = new CameraHelper();
+		this.wrapHelper = new WrapHelper();
+		this.selectorHelper = new SelectorHelper();
+		this.mouseHelper = new MouseInputHelper();
 
 		this.looperHelper.init();
 		this.mouseHelper.init();
-		// this.touchHelper.initUi(document.getElementsByClassName('mobc_dir')[0] as HTMLElement, 
-		// 						document.getElementsByClassName('mobc_dir_p')[0] as HTMLElement, 
-		// 						document.getElementsByClassName('mobc_shot')[0] as HTMLElement)
 		this.cameraHelper.init();
 		this.wrapHelper.init();
 		this.selectorHelper.init();
 
 		//this.wrapHelper.drawDebugBorder(this.scene);
-		new MasterPool(this);
-		new SceneHelper(this).init();
+		new MasterPool();
+		new SceneHelper().init();
 	}
 
 	start() {
@@ -74,7 +68,7 @@ export class GameSystem extends RenderSystem {
 	// ----------------------------------------------------------------------------------------------------------
 	addByName(mesh:Object3D, name:string)
 	{
-		mesh.userData['name'] = name;
+		mesh.name = name;
 		this.scene.add(mesh);
 	}
 

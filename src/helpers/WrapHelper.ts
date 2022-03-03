@@ -34,8 +34,8 @@ export class WrapHelper extends BaseHelper{
 
 	drawDebugBorder(parent:Object3D)
 	{
-		const w = this.gs.settings.worldSize.x;
-		const h = this.gs.settings.worldSize.y;
+		const w = this.gs.settings.worldSize!.x;
+		const h = this.gs.settings.worldSize!.y;
 
 		const z = 0.1;
 		const material = new LineBasicMaterial({color: 0x0000ff});
@@ -55,9 +55,9 @@ export class WrapHelper extends BaseHelper{
 
 	getWrapInfo(viewer:Vector2|Vector3):WrapInfo
 	{
-		var world_width = this.gs.settings.worldSize.x;
-		var world_height = this.gs.settings.worldSize.y;
-		var p = world_width * 0.5 - this.gs.settings.viewDistance;
+		var world_width = this.gs.settings.worldSize!.x;
+		var world_height = this.gs.settings.worldSize!.y;
+		var p = world_width * 0.5 - this.gs.settings.viewDistance!;
 
 		var right_border = p;
 		var left_border = -p;
@@ -67,7 +67,7 @@ export class WrapHelper extends BaseHelper{
 		var lx = -world_width * 0.5 + right_visible;
 		var rx =  world_width * 0.5 - left_visible;
 
-		var p = world_height * 0.5 - this.gs.settings.viewDistance;
+		var p = world_height * 0.5 - this.gs.settings.viewDistance!;
 		var top_border = p;
 		var bottom_border = -p;
 
@@ -132,8 +132,8 @@ export class WrapHelper extends BaseHelper{
 
 	wrapPosition(pos:Vector2|Vector3)
 	{
-		const w = this.gs.settings.worldSize.x * 0.5;
-		const h = this.gs.settings.worldSize.y * 0.5;
+		const w = this.gs.settings.worldSize!.x * 0.5;
+		const h = this.gs.settings.worldSize!.y * 0.5;
 		if (pos.x >= w)
 			pos.x -= 2*w;
 		if (pos.x <= -w)

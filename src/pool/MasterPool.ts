@@ -1,6 +1,5 @@
 import { BaseEntity, BaseSystem } from "ecs-threejs";
 import { Entity } from "../entitys/Entity";
-import { RenderSystem } from "../systems/RenderSystem";
 import { PointsMaterial } from "three";
 import { PoolsManager } from "./PoolsManager";
 
@@ -10,10 +9,10 @@ export class MasterPool extends BaseSystem {
     private manager: PoolsManager;
     public static isCloneMaterial = false;
 
-    constructor(system:RenderSystem) {
+    constructor() {
         super();
-        this.manager = new PoolsManager(system);
         MasterPool.instance = this;
+        this.manager = new PoolsManager();
     }
 
     public static setMaterialClone(val:boolean)

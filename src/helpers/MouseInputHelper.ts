@@ -1,10 +1,7 @@
+import { EventBus } from 'ecs-threejs';
+import { PointerEventData } from 'ecs-threejs/src/helpers/Input';
 import { Vector2 } from 'three';
 import { BaseHelper } from './BaseHelper';
-
-interface InputEvent {
-	key: number;
-	status: boolean;
-}
 
 export class MouseInputHelper extends BaseHelper {
 
@@ -16,19 +13,24 @@ export class MouseInputHelper extends BaseHelper {
 	private lastKeys: { [k: number]: boolean } = {};
 
 	init() {
-		this.gs.container.addEventListener('mousemove', this.onMouseMove.bind(this));
-		this.gs.container.addEventListener('mousedown', e => {
-			this.curKeys[e.button] = true;
-		});
-		this.gs.container.addEventListener('mouseup', e => {
-			this.curKeys[e.button] = false;
-		});
+		EventBus.subscribeEvent<PointerEventData>('onPointerMove', this.onMouseMove.bind(this));
+		EventBus.subscribeEvent<PointerEventData>('onPointerDown', this.onPointerDown.bind(this));
+		EventBus.subscribeEvent<PointerEventData>('onPointerUp', this.onPointerUp.bind(this));
 	}
 
-	private onMouseMove(event: MouseEvent) {
-		this.mousePos.x = event.pageX;
-		this.mousePos.y = event.pageY;
+	private onMouseMove(event: PointerEventData) {
+		this.mousePos.x = event.position.x;
+		this.mousePos.y = event.position.x;
 	}
+
+	private onPointerDown(event: PointerEventData) {
+		this.curKeys[event.button] = true;
+	}
+
+	private onPointerUp(event: PointerEventData) {
+		this.curKeys[event.button] = false;
+	}
+
 
 	public isMoveMouse() {
 		var now = Date.now();

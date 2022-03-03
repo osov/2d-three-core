@@ -15,10 +15,10 @@ export class PoolsManager extends BaseSystem{
 	private particlesList:{[k:string]:ParticlesStack} = {};
 
 
-	constructor(system:RenderSystem)
+	constructor()
 	{
 		super();
-		this.rs = system;
+		this.rs = RenderSystem.instance;
 	}
 
 	hasPool(name:string)

@@ -1,14 +1,14 @@
 import { BaseSystem } from 'ecs-threejs';
-import {GameSystem} from '../systems/GameSystem';
+import { GameSystem } from '../systems/GameSystem';
 
 export class BaseHelper extends BaseSystem{
-
 	protected gs:GameSystem;
-
-	constructor(manager:GameSystem)
+	
+	constructor()
 	{
 		super();
-		this.gs = manager;
+		this.gs = GameSystem.instance;
+		
 	}
 
 	init()

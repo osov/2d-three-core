@@ -1,8 +1,8 @@
 import { Vector2, Object3D, Raycaster } from 'three';
 import { BaseHelper } from './BaseHelper';
-import { BaseEntity, EventBus, Input } from 'ecs-threejs';
+import { BaseEntity, EventBus, Input, MonoBehaviour } from 'ecs-threejs';
 import { IEntityEventSubscribed } from 'ecs-threejs/src/systems/EventBus';
-import { PointerEventData } from 'ecs-threejs/src/helpers/InputHelper';
+import { PointerEventData } from 'ecs-threejs/src/helpers/Input';
 
 
 
@@ -13,7 +13,7 @@ export class SelectorHelper extends BaseHelper {
 	public isMoveIntersect = false;
 
 	private raycaster = new Raycaster();
-	private list: BaseEntity[] = [];
+	private list: MonoBehaviour[] = [];
 	private monitoredEvents: {[id:number]:{ [k: string]: string[] }} = {};
 
 	init() {
@@ -36,7 +36,7 @@ export class SelectorHelper extends BaseHelper {
 		}
 	}
 
-	add(entity: BaseEntity) {
+	add(entity: MonoBehaviour) {
 		if (this.list.includes(entity))
 			return;
 		this.list.push(entity);
@@ -86,8 +86,8 @@ export class SelectorHelper extends BaseHelper {
 	private checkOnIntersect(typeEvent: string, e: PointerEventData) {
 
 		var pointer = new Vector2(
-			(Input.mousePos.x / this.gs.container.clientWidth) * 2 - 1,
-			(Input.mousePos.y / this.gs.container.clientHeight) * 2 - 1
+			(Input.mousePosition.x / this.gs.container.clientWidth) * 2 - 1,
+			(Input.mousePosition.y / this.gs.container.clientHeight) * 2 - 1
 		);
 		this.raycaster.setFromCamera(pointer, this.gs.cameraOrtho);
 		const intersects = this.raycaster.intersectObjects(this.list, false);

@@ -1,4 +1,4 @@
-import {Mesh} from 'three';
+import { ResourceSystem } from 'ecs-threejs';
 import {BaseMesh} from './BaseMesh';
 const TroikaText = require('troika-three-text');
 
@@ -10,11 +10,11 @@ export class SimpleText extends BaseMesh{
 	public readonly mesh:any;
 	private curColor:string;
 
-	constructor(text:string, fontUrl:string, fontSize = 16)
+	constructor(text:string, fontSize = 16)
 	{
 		super();
 		var mesh = new TroikaText.Text();
-		mesh.font = fontUrl;
+		mesh.font = ResourceSystem.instance.getLoadedFont();
 		mesh.text =  text;
 		mesh.fontSize = fontSize;
 		mesh.anchorX = '50%';
@@ -33,7 +33,12 @@ export class SimpleText extends BaseMesh{
 	setColor(color:string, alpha = 1)
 	{
 		this.curColor = color;
+		if (color.length > 7){
+			alpha = parseInt(color.substr(7,2), 16)/255;
+			color = color.substr(0,7);
+		}
 		this.mesh.color = this.HEXToVBColor(color);
+		this.mesh.fillOpacity = alpha;
 		this.mesh.sync();
 	}
 
@@ -45,7 +50,7 @@ export class SimpleText extends BaseMesh{
 
 	makeInstance()
 	{
-		var copy = new SimpleText(this.mesh.text, this.mesh.font, this.mesh.fontSize);
+		var copy = new SimpleText(this.mesh.text,  this.mesh.fontSize);
 		copy.setColor(this.curColor);
 		this.makeChildsInstance(copy);
 		return copy;

@@ -20,6 +20,11 @@ export class BaseMesh extends Entity{
 
 	setColor(color:string, alpha = 1)
 	{
+		if (color.length > 7){
+			alpha = parseInt(color.substr(7,2), 16)/255;
+			
+			color = color.substr(0,7);
+		}
 		var mesh = this;
 		var mat = mesh.material;
 		if (alpha != -1)
