@@ -9,7 +9,7 @@ import { Entity } from '../entitys/Entity';
 import * as gUtils from '../core/gameUtils';
 import { MasterPool } from '../pool/MasterPool';
 import { SceneHelper } from '../helpers/SceneHelper';
-
+import * as TWEEN from '@tweenjs/tween.js';
 
 interface WorldSettings {
 	worldWrap?: boolean;
@@ -131,7 +131,7 @@ export class GameSystem extends RenderSystem {
 
 	// Очередь обработки: network, time system, pool, wrap, render
 	update(deltaTime: number, now: number) {
-		
+		TWEEN.update();
 		this.dispatchEvent({ type: 'onBeforeRender', deltaTime, now });
 		this.entitysSystem.update(deltaTime);
 

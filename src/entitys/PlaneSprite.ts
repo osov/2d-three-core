@@ -1,7 +1,7 @@
 import { MasterPool } from '../pool/MasterPool';
-import { Mesh, MeshBasicMaterial, PlaneBufferGeometry, Texture } from 'three';
+import { Mesh, MeshBasicMaterial, PlaneBufferGeometry, Texture, Vector2, Vector3 } from 'three';
 import { BaseMesh } from './BaseMesh';
-
+import * as TWEEN from '@tweenjs/tween.js';
 
 export class PlaneSprite extends BaseMesh {
 	protected className = 'PlaneSprite';
@@ -23,7 +23,23 @@ export class PlaneSprite extends BaseMesh {
 			it = this.imgList[0];
 		else
 			it = this.imgList[index];
-		this.material.map = it;	
+		this.material.map = it;
+	}
+
+	setAnchoredPosition(pos: Vector2) {
+		this.setPosition(pos);
+	}
+
+	DOAnchorPos(pos: Vector2, time: number) {
+		new TWEEN.Tween(this.position)
+			.to(pos, time * 1000)
+			.start()
+	}
+
+	DOScale(scale:Vector3, time:number){
+		new TWEEN.Tween(this.scale)
+			.to(scale, time * 1000)
+			.start()
 	}
 
 	makeInstance() {

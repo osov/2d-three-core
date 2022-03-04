@@ -1,5 +1,5 @@
 import { EventBus } from "ecs-threejs";
-import { PointerEventData } from "ecs-threejs/src/helpers/Input";
+import { PointerEventData } from "ecs-threejs/src/unityTypes/Input";
 import { MeshBasicMaterial } from "three";
 import { MasterPool } from "../pool/MasterPool";
 import { SimpleText } from "./SimpleText";
